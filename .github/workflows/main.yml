@@ -1,0 +1,48 @@
+name: Actualizar Dashboard YouTube
+
+on:
+  schedule:
+    - cron: '0 5 * * *' # Se ejecuta todos los días (Aproximadamente a medianoche de Latinoamérica)
+  workflow_dispatch: # Permite ejecutarlo manualmente con un botón
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📥 Clonar repositorio
+        uses: actions/checkout@v3
+
+      - name: 🐍 Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 📦 Instalar dependencias
+        run: |
+          pip install -r requirements.txt
+
+      - name: 🔑 Crear archivos secretos
+        run: |
+          echo '${{ secrets.CLIENT_SECRET_JSON }}' > client_secret.json
+          echo '${{ secrets.TOKEN_JSON }}' > token.json
+
+      - name: 🚀 Ejecutar script generador
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+          GITHUB_ACTIONS: "true"
+        run: python youtube_horas.py
+
+      - name: 🧹 Limpiar secretos antes de publicar
+        run: |
+          rm client_secret.json
+          rm token.json
+
+      - name: 🌐 Publicar en GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          publish_branch: gh-pages
