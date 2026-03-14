@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📊 YouTube Analytics — Canal de Terror</title>
+<meta name="description" content="Dashboard de analytics para canal de YouTube de terror.">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0f172a;--bg2:#1e293b;--surface:#1e293b;--surface2:#334155;--surface3:#475569;
+  --border:#334155;--border2:#475569;--accent:#3b82f6;--accent2:#60a5fa;--accent3:#93c5fd;
+  --text:#f8fafc;--text2:#cbd5e1;--muted:#94a3b8;--green:#10b981;--yellow:#fbbf24;
+  --radius:14px;--radius-sm:8px;--glow:0 0 20px rgba(59,130,246,.35);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);background-image:radial-gradient(ellipse 80% 50% at 50% -10%,#1e3a8a 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,#0f172a 0%,transparent 50%);font-family:'Inter',system-ui,sans-serif;color:var(--text);min-height:100vh;padding:0 0 60px;overflow-x:hidden}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+.hero{position:relative;text-align:center;padding:54px 24px 48px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#0f172a 0%,transparent 100%);overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 100% 100% at 50% 0%,rgba(59,130,246,.12) 0%,transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(59,130,246,.15);border:1px solid var(--border2);border-radius:99px;padding:6px 16px;font-size:.75rem;color:var(--accent2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;animation:pulse-border 3s ease-in-out infinite}
+@keyframes pulse-border{0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,0);border-color:#334155}50%{box-shadow:0 0 12px 2px rgba(59,130,246,.3);border-color:#3b82f6}}
+.hero h1{font-family:'Inter',sans-serif;font-weight:800;font-size:clamp(2.2rem,5vw,3.6rem);letter-spacing:.02em;background:linear-gradient(135deg,#60a5fa 0%,#3b82f6 40%,#93c5fd 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 18px rgba(59,130,246,.5));line-height:1.1}
+.hero-sub{color:var(--muted);font-size:.88rem;margin-top:10px;letter-spacing:.02em}
+.hero-meta{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:22px;flex-wrap:wrap}
+.hero-meta-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.container{max-width:1380px;margin:0 auto;padding:0 24px}
+.section{margin-top:40px}
+.section-title{font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 20px;position:relative;overflow:hidden;transition:transform .22s cubic-bezier(.4,0,.2,1),box-shadow .22s;cursor:default}
+.card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(59,130,246,.05) 0%,transparent 60%);opacity:0;transition:opacity .22s}
+.card:hover{transform:translateY(-5px);box-shadow:var(--glow),0 0 0 1px #334155}
+.card:hover::before{opacity:1}
+.card-icon{font-size:1.4rem;margin-bottom:12px;filter:drop-shadow(0 0 6px rgba(59,130,246,.4))}
+.card-label{font-size:.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.card-value{font-size:1.8rem;font-weight:800;line-height:1;color:var(--text)}
+.card-value.accent{color:var(--accent2)}.card-value.gold{color:var(--yellow)}
+.card-sub{font-size:.72rem;color:var(--muted);margin-top:5px}
+.progress-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 26px}
+.progress-header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:10px;margin-bottom:20px}
+.progress-title{font-size:1rem;font-weight:700}
+.progress-pct{font-size:2.4rem;font-weight:800;color:var(--accent2);line-height:1;filter:drop-shadow(0 0 12px rgba(59,130,246,.5))}
+.progress-track{background:var(--surface3);border-radius:999px;height:22px;overflow:hidden;position:relative}
+.progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#1e3a8a,#3b82f6,#60a5fa,#93c5fd);background-size:200% 100%;animation:shimmer 3s linear infinite,glow-bar 2s ease-in-out infinite alternate;transition:width 1.5s cubic-bezier(.4,0,.2,1)}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+@keyframes glow-bar{from{box-shadow:0 0 10px #1e40af,0 0 3px #3b82f6}to{box-shadow:0 0 24px #3b82f6,0 0 8px #60a5fa}}
+.progress-labels{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-top:10px}
+.prediction-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
+.prediction-item{flex:1;min-width:140px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px}
+.prediction-item .plabel{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:4px}
+.prediction-item .pval{font-size:1.15rem;font-weight:700;color:var(--yellow)}
+.charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:18px}
+.chart-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.chart-panel h3{font-size:.85rem;font-weight:600;color:var(--text2);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.search-box{flex:1;min-width:200px;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;transition:border-color .2s,box-shadow .2s}
+.search-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.search-box svg{flex-shrink:0;color:var(--muted)}
+.search-box input{background:none;border:none;outline:none;font-family:inherit;font-size:.88rem;color:var(--text);width:100%}
+.search-box input::placeholder{color:var(--muted)}
+.filter-btn{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text2);font-family:inherit;font-size:.82rem;cursor:pointer;transition:border-color .2s,color .2s,background .2s;white-space:nowrap}
+.filter-btn:hover{border-color:var(--border2);color:var(--text);background:var(--surface2)}
+.filter-btn.active{border-color:var(--accent);color:var(--accent2);background:rgba(59,130,246,.12)}
+.table-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.table-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.855rem;min-width:900px}
+thead{background:var(--surface2);position:sticky;top:0;z-index:5}
+th{padding:13px 15px;text-align:left;font-size:.71rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);white-space:nowrap;cursor:pointer;user-select:none;transition:color .15s}
+th:hover{color:var(--text)}
+th .sort-icon{display:inline-block;margin-left:5px;font-size:.65rem;opacity:.5;transition:opacity .15s}
+th.sorted-asc .sort-icon::after{content:' ▲';opacity:1;color:var(--accent2)}
+th.sorted-desc .sort-icon::after{content:' ▼';opacity:1;color:var(--accent2)}
+th:not(.sorted-asc):not(.sorted-desc) .sort-icon::after{content:' ⇅'}
+td{padding:12px 15px;border-bottom:1px solid var(--border);vertical-align:middle;transition:background .15s}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background .15s}
+tbody tr:hover td{background:var(--surface2)}
+.video-cell{display:flex;align-items:center;gap:13px;min-width:270px;max-width:360px}
+.thumb-wrap{position:relative;flex-shrink:0}
+.thumb-wrap img{width:112px;height:63px;object-fit:cover;border-radius:6px;display:block;transition:filter .2s}
+.thumb-wrap img:hover{filter:brightness(1.15)}
+.thumb-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;background:rgba(0,0,0,.4);border-radius:6px;font-size:1.2rem}
+.thumb-wrap:hover .thumb-overlay{opacity:1}
+.video-title{color:var(--text);text-decoration:none;font-weight:500;line-height:1.45;font-size:.82rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;transition:color .15s}
+.video-title:hover{color:var(--accent2)}
+.badge{display:inline-block;padding:3px 9px;border-radius:99px;font-size:.7rem;font-weight:700;letter-spacing:.02em}
+.badge-high{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3)}
+.badge-mid{background:rgba(251,191,36,.15);color:#fbbf24;border:1px solid rgba(251,191,36,.3)}
+.badge-low{background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
+.num{font-variant-numeric:tabular-nums}
+.hrs-value{font-weight:800;font-size:.95rem;color:var(--accent2)}
+.mini-bar-wrap{min-width:90px}
+.mini-bar-bg{background:var(--surface3);border-radius:99px;height:5px;width:100%;margin-top:4px;overflow:hidden}
+.mini-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,#1e3a8a,#3b82f6)}
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);font-size:.88rem}
+.empty-state .big{font-size:2.5rem;margin-bottom:10px}
+.totals-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px}
+.totals-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:16px;margin-top:14px}
+.total-item{border-left:3px solid var(--border2);padding-left:12px}
+.total-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.total-val{font-size:1.1rem;font-weight:700;margin-top:2px}
+.footer{text-align:center;color:var(--muted);font-size:.76rem;margin-top:48px;padding-top:20px;border-top:1px solid var(--border)}
+@media(max-width:640px){.hero{padding:40px 18px 36px}.charts-grid{grid-template-columns:1fr}.container{padding:0 14px}.cards-grid{grid-template-columns:repeat(2,1fr)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.animate{animation:fadeUp .5s ease both}.delay-1{animation-delay:.08s}.delay-2{animation-delay:.16s}.delay-3{animation-delay:.24s}.delay-4{animation-delay:.32s}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge"><span class="dot"></span> Actualizado · Canal de Terror</div>
+  <h1>📊 YouTube Analytics Dashboard</h1>
+  <p class="hero-sub">Seguimiento de horas de reproducción hacia monetización</p>
+  <div class="hero-meta">
+    <span class="hero-meta-item">🗓️ Período: <strong>[[START_DATE]] → hoy</strong></span>
+    <span class="hero-meta-item">🕐 Generado: <strong>[[GENERATED_AT]]</strong></span>
+    <span class="hero-meta-item">🎯 Meta: <strong>4,000 hrs</strong></span>
+  </div>
+</div>
+<div class="container">
+  <div class="section animate">
+    <div class="section-title">📈 Métricas generales</div>
+    <div class="cards-grid" id="cards-grid"></div>
+  </div>
+  <div class="section animate delay-1">
+    <div class="section-title">🎯 Progreso hacia monetización</div>
+    
+    <!-- Barra Postulación de Socios -->
+    <div class="progress-panel" style="margin-bottom:20px;">
+      <div class="progress-header">
+        <div>
+          <div class="progress-title">Postulación a Socio de YouTube</div>
+          <div style="color:var(--muted);font-size:.8rem;margin-top:4px" id="prog1-details"></div>
+        </div>
+        <div class="progress-pct" id="prog1-pct"></div>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill-1" style="width:0%"></div></div>
+      <div class="progress-labels">
+        <span id="prog1-current"></span><span id="prog1-mid"></span><span>Meta: 3,000 hrs</span>
+      </div>
+    </div>
+    
+    <!-- Barra Monetización Completa -->
+    <div class="progress-panel">
+      <div class="progress-header">
+        <div>
+          <div class="progress-title">Monetización Completa</div>
+          <div style="color:var(--muted);font-size:.8rem;margin-top:4px" id="prog2-details"></div>
+        </div>
+        <div class="progress-pct" id="prog2-pct"></div>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill-2" style="width:0%"></div></div>
+      <div class="progress-labels">
+        <span id="prog2-current"></span><span id="prog2-mid"></span><span>Meta: 4,000 hrs</span>
+      </div>
+      <div class="prediction-row" id="pred-row"></div>
+    </div>
+  </div>
+  <div class="section animate delay-2">
+    <div class="section-title">📊 Gráficos</div>
+    <div class="charts-grid">
+      <div class="chart-panel"><h3>🏆 Horas por video (Top 10)</h3><canvas id="chart-hours" height="260"></canvas></div>
+      <div class="chart-panel"><h3>👁️ Retención por video</h3><canvas id="chart-retention" height="260"></canvas></div>
+    </div>
+  </div>
+  <div class="section animate delay-3">
+    <div class="section-title">📋 Resumen de columnas</div>
+    <div class="totals-panel"><div class="totals-grid" id="totals-grid"></div></div>
+  </div>
+  <div class="section animate delay-4">
+    <div class="section-title">🎬 Videos analizados</div>
+    <div class="toolbar">
+      <div class="search-box">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="search-input" placeholder="Buscar video…" autocomplete="off">
+      </div>
+      <button class="filter-btn" id="btn-all"  onclick="setFilter('all')">Todos</button>
+      <button class="filter-btn" id="btn-high" onclick="setFilter('high')">🔴 Retención ≥40%</button>
+      <button class="filter-btn" id="btn-mid"  onclick="setFilter('mid')">🟠 Media 25–40%</button>
+      <button class="filter-btn" id="btn-low"  onclick="setFilter('low')">🔵 Baja &lt;25%</button>
+      <button class="filter-btn" onclick="clearSearch()">✕ Limpiar</button>
+    </div>
+    <div class="table-panel">
+      <div class="table-scroll">
+        <table>
+          <thead><tr>
+            <th data-col="title">Video<span class="sort-icon"></span></th>
+            <th data-col="published">Fecha<span class="sort-icon"></span></th>
+            <th data-col="duration">Duración<span class="sort-icon"></span></th>
+            <th data-col="views">Vistas<span class="sort-icon"></span></th>
+            <th data-col="minutes">Min. vistos<span class="sort-icon"></span></th>
+            <th data-col="hours">Horas<span class="sort-icon"></span></th>
+            <th data-col="min_view">Min/Vista<span class="sort-icon"></span></th>
+            <th data-col="retention">Retención %<span class="sort-icon"></span></th>
+            <th data-col="views_day">Vistas/día<span class="sort-icon"></span></th>
+          </tr></thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div style="color:var(--muted);font-size:.76rem;margin-top:10px;text-align:right" id="row-count"></div>
+  </div>
+</div>
+<div class="footer container">
+  <p>YouTube Analytics Dashboard &nbsp;·&nbsp; [[GENERATED_AT]] &nbsp;·&nbsp; Canal de Terror</p>
+  <p style="margin-top:6px">Período desde [[START_DATE]] &nbsp;·&nbsp; Meta: [[GOAL_INT]] hrs</p>
+</div>
+<script>
+const CONFIG={"startDate":"[[START_DATE]]","generatedAt":"[[GENERATED_AT]]","goal":[[GOAL]]};
+const VIDEOS=[[JS_VIDEOS]];
+let sortCol='hours',sortDir='desc',filter='all',search='';
+const fmt=n=>n.toLocaleString('es-ES',{minimumFractionDigits:0,maximumFractionDigits:2});
+const fmtI=n=>Math.round(n).toLocaleString('es-ES');
+const fmtP=n=>n.toFixed(1)+'%';
+const totalHours=()=>VIDEOS.reduce((s,v)=>s+v.hours,0);
+const totalViews=()=>VIDEOS.reduce((s,v)=>s+v.views,0);
+const totalMins=()=>VIDEOS.reduce((s,v)=>s+v.minutes,0);
+const avgRet=()=>VIDEOS.reduce((s,v)=>s+v.retention,0)/VIDEOS.length;
+const avgMinView=()=>VIDEOS.reduce((s,v)=>s+v.min_view,0)/VIDEOS.length;
+const sumViewsDay=()=>VIDEOS.reduce((s,v)=>s+v.views_day,0);
+function retBadge(r){
+  if(r>=40)return`<span class="badge badge-high">${r}%</span>`;
+  if(r>=25)return`<span class="badge badge-mid">${r}%</span>`;
+  return`<span class="badge badge-low">${r}%</span>`;
+}
+function miniBar(val,max){
+  const pct=Math.min((val/max)*100,100);
+  return`<div class="mini-bar-wrap"><div class="num">${fmt(val)}</div><div class="mini-bar-bg"><div class="mini-bar" style="width:${pct}%"></div></div></div>`;
+}
+function renderCards(){
+  const th=totalHours(),rem=Math.max(CONFIG.goal-th,0),hpd=th/9;
+  const cards=[
+    {icon:'🎬',label:'Videos analizados',value:VIDEOS.length,cls:'accent',sub:`desde ${CONFIG.startDate}`},
+    {icon:'⏱️',label:'Horas acumuladas',value:fmt(th),cls:'accent',sub:`de ${fmtI(CONFIG.goal)} necesarias`},
+    {icon:'🏁',label:'Horas restantes',value:fmt(rem),cls:'',sub:`~${hpd.toFixed(1)} hrs/día actual`},
+    {icon:'👀',label:'Vistas totales',value:fmtI(totalViews()),cls:'',sub:'total del período'},
+    {icon:'🔁',label:'Retención media',value:fmtP(avgRet()),cls:'gold',sub:'promedio entre videos'},
+    {icon:'📅',label:'Vistas/día (total)',value:fmtI(sumViewsDay()),cls:'',sub:'suma de todos los videos'},
+  ];
+  document.getElementById('cards-grid').innerHTML=cards.map(c=>`<div class="card"><div class="card-icon">${c.icon}</div><div class="card-label">${c.label}</div><div class="card-value ${c.cls}">${c.value}</div><div class="card-sub">${c.sub}</div></div>`).join('');
+}
+function renderProgress(){
+  const th=totalHours();
+  const rem1=Math.max(3000-th,0),pct1=Math.min((th/3000)*100,100);
+  document.getElementById('prog1-pct').textContent=pct1.toFixed(1)+'%';
+  document.getElementById('prog1-details').textContent=`${fmt(th)} hrs acumuladas · ${fmt(rem1)} hrs restantes`;
+  document.getElementById('prog1-current').textContent=`${fmt(th)} hrs`;
+  document.getElementById('prog1-mid').textContent=pct1.toFixed(1)+'%';
+  
+  const rem2=Math.max(CONFIG.goal-th,0),pct2=Math.min((th/CONFIG.goal)*100,100);
+  document.getElementById('prog2-pct').textContent=pct2.toFixed(1)+'%';
+  document.getElementById('prog2-details').textContent=`${fmt(th)} hrs acumuladas · ${fmt(rem2)} hrs restantes`;
+  document.getElementById('prog2-current').textContent=`${fmt(th)} hrs`;
+  document.getElementById('prog2-mid').textContent=pct2.toFixed(1)+'%';
+
+  requestAnimationFrame(()=>setTimeout(()=>{
+    document.getElementById('progress-fill-1').style.width=pct1+'%';
+    document.getElementById('progress-fill-2').style.width=pct2+'%';
+  },100));
+
+  const hpd=th/9,daysLeft=hpd>0?Math.ceil(rem2/hpd):null;
+  let etaStr='–';
+  if(daysLeft){const eta=new Date();eta.setDate(eta.getDate()+daysLeft);etaStr=eta.toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'});}
+  document.getElementById('pred-row').innerHTML=`
+    <div class="prediction-item"><div class="plabel">Velocidad actual</div><div class="pval">${hpd.toFixed(1)} hrs/día</div></div>
+    <div class="prediction-item"><div class="plabel">Días restantes est.</div><div class="pval">${daysLeft?daysLeft+' días':'–'}</div></div>
+    <div class="prediction-item"><div class="plabel">Fecha est. monetización</div><div class="pval" style="font-size:.95rem">${etaStr}</div></div>
+    <div class="prediction-item"><div class="plabel">Hrs semanales (prom.)</div><div class="pval">${(hpd*7).toFixed(0)} hrs/sem</div></div>`;
+}
+function renderTotals(){
+  const totals=[
+    {label:'Duración total',val:fmt(VIDEOS.reduce((s,v)=>s+v.duration,0))+' min'},
+    {label:'Vistas totales',val:fmtI(totalViews())},
+    {label:'Min. vistos totales',val:fmtI(totalMins())},
+    {label:'Horas acumuladas',val:fmt(totalHours())},
+    {label:'Min/Vista (prom.)',val:avgMinView().toFixed(2)},
+    {label:'Retención (prom.)',val:fmtP(avgRet())},
+    {label:'Vistas/día (total)',val:fmt(sumViewsDay())},
+  ];
+  document.getElementById('totals-grid').innerHTML=totals.map(t=>`<div class="total-item"><div class="total-label">${t.label}</div><div class="total-val">${t.val}</div></div>`).join('');
+}
+function renderCharts(){
+  const top10=[...VIDEOS].sort((a,b)=>b.hours-a.hours).slice(0,10);
+  Chart.defaults.color='#cbd5e1';
+  const grid='rgba(148,163,184,.15)',tick='#94a3b8';
+  new Chart(document.getElementById('chart-hours').getContext('2d'),{
+    type:'bar',
+    data:{labels:top10.map(v=>v.title.length>30?v.title.slice(0,30)+'…':v.title),datasets:[{label:'Horas',data:top10.map(v=>v.hours),backgroundColor:top10.map((v,i)=>`rgba(59,130,246,${Math.max(0.2, 0.85-i*.05)})`),borderRadius:5,borderSkipped:false}]},
+    options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.raw.toFixed(2)} hrs`}}},scales:{x:{grid:{color:grid},ticks:{color:tick}},y:{grid:{display:false},ticks:{color:tick,font:{size:10}}}}}
+  });
+  const sorted=[...VIDEOS].sort((a,b)=>b.retention-a.retention);
+  new Chart(document.getElementById('chart-retention').getContext('2d'),{
+    type:'bar',
+    data:{labels:sorted.map(v=>v.title.length>28?v.title.slice(0,28)+'…':v.title),datasets:[{label:'%',data:sorted.map(v=>v.retention),backgroundColor:sorted.map(v=>v.retention>=40?'rgba(16,185,129,.8)':v.retention>=25?'rgba(251,191,36,.8)':'rgba(239,68,68,.8)'),borderRadius:5,borderSkipped:false}]},
+    options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.raw}% retención`}}},scales:{x:{grid:{color:grid},ticks:{color:tick},min:0,max:70},y:{grid:{display:false},ticks:{color:tick,font:{size:10}}}}}
+  });
+}
+function getFiltered(){
+  let data=[...VIDEOS];
+  if(search){const q=search.toLowerCase();data=data.filter(v=>v.title.toLowerCase().includes(q));}
+  if(filter==='high')data=data.filter(v=>v.retention>=40);
+  if(filter==='mid')data=data.filter(v=>v.retention>=25&&v.retention<40);
+  if(filter==='low')data=data.filter(v=>v.retention<25);
+  data.sort((a,b)=>{const av=a[sortCol],bv=b[sortCol];if(typeof av==='string')return sortDir==='asc'?av.localeCompare(bv):bv.localeCompare(av);return sortDir==='asc'?av-bv:bv-av;});
+  return data;
+}
+function renderTable(){
+  const data=getFiltered(),maxM=Math.max(...VIDEOS.map(v=>v.minutes)),tbody=document.getElementById('table-body');
+  if(data.length===0){tbody.innerHTML=`<tr><td colspan="9"><div class="empty-state"><div class="big">🔍</div>No se encontraron videos.</div></td></tr>`;}
+  else{tbody.innerHTML=data.map(v=>`<tr>
+    <td><div class="video-cell"><div class="thumb-wrap"><img src="https://img.youtube.com/vi/${v.vid}/mqdefault.jpg" alt="thumbnail" loading="lazy"><div class="thumb-overlay">▶</div></div><a href="https://www.youtube.com/watch?v=${v.vid}" target="_blank" class="video-title">${v.title}</a></div></td>
+    <td class="num">${v.published}</td><td class="num">${v.duration} min</td><td class="num">${fmtI(v.views)}</td>
+    <td>${miniBar(v.minutes,maxM)}</td><td><span class="hrs-value">${v.hours.toFixed(2)}</span></td>
+    <td class="num">${v.min_view}</td><td>${retBadge(v.retention)}</td><td class="num">${v.views_day}</td>
+  </tr>`).join('');}
+  document.getElementById('row-count').textContent=`Mostrando ${data.length} de ${VIDEOS.length} videos`;
+  document.querySelectorAll('th[data-col]').forEach(th=>{th.classList.remove('sorted-asc','sorted-desc');if(th.dataset.col===sortCol)th.classList.add(sortDir==='asc'?'sorted-asc':'sorted-desc');});
+}
+document.querySelectorAll('th[data-col]').forEach(th=>{th.addEventListener('click',()=>{const col=th.dataset.col;if(sortCol===col){sortDir=sortDir==='asc'?'desc':'asc';}else{sortCol=col;sortDir='desc';}renderTable();});});
+document.getElementById('search-input').addEventListener('input',e=>{search=e.target.value.trim();renderTable();});
+function setFilter(f){filter=f;['all','high','mid','low'].forEach(id=>document.getElementById('btn-'+id).classList.toggle('active',id===f));renderTable();}
+function clearSearch(){search='';filter='all';document.getElementById('search-input').value='';setFilter('all');}
+renderCards();renderProgress();renderTotals();renderTable();renderCharts();setFilter('all');
+</script>
+</body>
+</html>
