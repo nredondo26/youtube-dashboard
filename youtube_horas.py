@@ -22,7 +22,7 @@ START_DATE         = "2024-03-15"
 END_DATE           = datetime.now(timezone.utc).date().strftime("%Y-%m-%d")
 MONETIZATION_GOAL  = 4000          # horas requeridas para monetizar
 MIN_DURATION_SEC   = 0             # Incluir todos los videos (incluyendo Shorts)
-MAX_RESULTS        = 500           # Aumentar límite de videos analizados
+MAX_RESULTS        = 200           # El límite de la API para la dimensión 'video' es 200
 
 
 from google.auth.transport.requests import Request
@@ -230,24 +230,24 @@ def generate_html(videos: list, goal: float, channel_info: dict, daily_data: dic
 # MAIN
 # ─────────────────────────────────────────────
 def main():
-    print("🔐 Autenticando...")
+    print("[Autenticando]...")
     analytics, youtube = authenticate()
 
-    print(f"📡 Obteniendo analytics ({START_DATE} → {END_DATE})...")
+    print(f"[Obteniendo analytics] ({START_DATE} -> {END_DATE})...")
     rows      = get_analytics(analytics, START_DATE, END_DATE)
     video_ids = [r[0] for r in rows]
 
     start_date_dt = datetime.strptime(START_DATE, "%Y-%m-%d")
-    print(f"🎬 Obteniendo detalles de {len(video_ids)} videos...")
+    print(f"[Obteniendo detalles] de {len(video_ids)} videos...")
     info = get_video_details(youtube, video_ids, start_date_dt)
 
-    print("🎬 Obteniendo información del canal...")
+    print("[Obteniendo información del canal]...")
     channel_info = get_channel_info(youtube)
 
-    print("⚙️  Procesando métricas...")
+    print("[Procesando métricas]...")
     videos = process_videos(rows, info)
 
-    print("📈 Obteniendo reportes diarios...")
+    print("[Obteniendo reportes diarios]...")
     daily_rows = get_daily_reports(analytics, START_DATE, END_DATE)
     
     # Calcular métricas diarias
@@ -278,20 +278,20 @@ def main():
         "comparison": comp_data
     }
 
-    print("🖥️  Generando dashboard HTML...")
+    print("[Generando dashboard HTML]...")
     html = generate_html(videos, MONETIZATION_GOAL, channel_info, daily_metrics)
 
     html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html")
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html)
 
-    print(f"\\n✅ Dashboard generado correctamente:")
+    print(f"\n[Dashboard generado correctamente]:")
     print(f"   {html_path}")
     
     try:
         # Solo abrir navegador si NO estamos en GitHub Actions
         if not os.getenv("GITHUB_ACTIONS"):
-            print("🌐 Abriendo el dashboard en tu navegador web...")
+            print("[Abriendo el dashboard en tu navegador web]...")
             webbrowser.open(f"file://{html_path}")
     except Exception as e:
         print(f"No se pudo abrir automáticamente el navegador: {e}")
