@@ -21,8 +21,8 @@ SCOPES             = ["https://www.googleapis.com/auth/yt-analytics.readonly"]
 START_DATE         = "2024-03-15"
 END_DATE           = datetime.now(timezone.utc).date().strftime("%Y-%m-%d")
 MONETIZATION_GOAL  = 4000          # horas requeridas para monetizar
-MIN_DURATION_SEC   = 420           # ignorar videos < 7 minutos
-MAX_RESULTS        = 200
+MIN_DURATION_SEC   = 0             # Incluir todos los videos (incluyendo Shorts)
+MAX_RESULTS        = 500           # Aumentar límite de videos analizados
 
 
 from google.auth.transport.requests import Request
@@ -120,7 +120,7 @@ def get_video_details(youtube, video_ids: list, start_date_dt: datetime) -> dict
             published_str  = item["snippet"]["publishedAt"][:10]
             published_date = datetime.strptime(published_str, "%Y-%m-%d")
 
-            if seconds >= MIN_DURATION_SEC and published_date >= start_date_dt:
+            if seconds >= MIN_DURATION_SEC:
                 info[vid] = {
                     "title":     item["snippet"]["title"],
                     "published": published_str,
