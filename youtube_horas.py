@@ -21,7 +21,7 @@ SCOPES             = ["https://www.googleapis.com/auth/yt-analytics.readonly"]
 START_DATE         = datetime.now(timezone.utc).date().replace(month=1, day=1).strftime("%Y-%m-%d")
 END_DATE           = datetime.now(timezone.utc).date().strftime("%Y-%m-%d")
 MONETIZATION_GOAL  = 4000          # horas requeridas para monetizar
-MIN_DURATION_SEC   = 0             # Incluir todos los videos (incluyendo Shorts)
+MIN_DURATION_SEC   = 120           # Solo videos > 2 minutos (para monetización)
 MAX_RESULTS        = 200           # El límite de la API para la dimensión 'video' es 200
 
 
