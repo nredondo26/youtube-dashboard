@@ -18,7 +18,8 @@ CHANNEL_ID         = os.getenv("CHANNEL_ID", "UCiFazFymzsTLHTA2dvEsa8A")
 CLIENT_SECRET_FILE = os.getenv("CLIENT_SECRET_FILE", "client_secret.json")
 SCOPES             = ["https://www.googleapis.com/auth/yt-analytics.readonly"]
 
-START_DATE         = "2026-03-01"
+START_DATE         = "2024-03-15"
+END_DATE           = datetime.now(timezone.utc).date().strftime("%Y-%m-%d")
 MONETIZATION_GOAL  = 4000          # horas requeridas para monetizar
 MIN_DURATION_SEC   = 420           # ignorar videos < 7 minutos
 MAX_RESULTS        = 200
@@ -65,6 +66,18 @@ def get_analytics(analytics, start_date: str, end_date: str) -> list:
         dimensions="video",
         sort="-estimatedMinutesWatched",
         maxResults=MAX_RESULTS,
+    ).execute()
+    return response.get("rows", [])
+    
+def get_daily_reports(analytics, start_date: str, end_date: str) -> list:
+    """Obtiene el rendimiento por día (horas, vistas)."""
+    response = analytics.reports().query(
+        ids="channel==MINE",
+        startDate=start_date,
+        endDate=end_date,
+        metrics="estimatedMinutesWatched,views",
+        dimensions="day",
+        sort="day"
     ).execute()
     return response.get("rows", [])
 
@@ -170,7 +183,7 @@ def process_videos(rows: list, info: dict) -> list:
 # ─────────────────────────────────────────────
 # GENERAR HTML  (versión premium con Chart.js)
 # ─────────────────────────────────────────────
-def generate_html(videos: list, goal: float, channel_info: dict) -> str:
+def generate_html(videos: list, goal: float, channel_info: dict, daily_data: dict) -> str:
     generated_at = datetime.now().strftime("%d/%m/%Y %H:%M")
 
     # Build JSON for the JS data block
@@ -200,6 +213,7 @@ def generate_html(videos: list, goal: float, channel_info: dict) -> str:
 
     # Reemplazar placeholders
     html = html.replace("[[START_DATE]]", START_DATE)
+    html = html.replace("[[END_DATE]]", END_DATE)
     html = html.replace("[[GENERATED_AT]]", generated_at)
     html = html.replace("[[GOAL]]", str(goal))
     html = html.replace("[[GOAL_INT]]", f"{int(goal):,}")
@@ -207,6 +221,7 @@ def generate_html(videos: list, goal: float, channel_info: dict) -> str:
     html = html.replace("[[CHANNEL_TITLE]]", channel_info["title"])
     html = html.replace("[[CHANNEL_THUMB]]", channel_info["thumb"])
     html = html.replace("[[CHANNEL_SUBS]]", f"{channel_info['subs']:,}")
+    html = html.replace("[[JS_DAILY_METRICS]]", json.dumps(daily_data, ensure_ascii=False))
 
     return html
 
@@ -218,13 +233,11 @@ def main():
     print("🔐 Autenticando...")
     analytics, youtube = authenticate()
 
-    end_date       = datetime.now(timezone.utc).date().strftime("%Y-%m-%d")
-    start_date_dt  = datetime.strptime(START_DATE, "%Y-%m-%d")
-
-    print(f"📡 Obteniendo analytics ({START_DATE} → {end_date})...")
-    rows      = get_analytics(analytics, START_DATE, end_date)
+    print(f"📡 Obteniendo analytics ({START_DATE} → {END_DATE})...")
+    rows      = get_analytics(analytics, START_DATE, END_DATE)
     video_ids = [r[0] for r in rows]
 
+    start_date_dt = datetime.strptime(START_DATE, "%Y-%m-%d")
     print(f"🎬 Obteniendo detalles de {len(video_ids)} videos...")
     info = get_video_details(youtube, video_ids, start_date_dt)
 
@@ -234,8 +247,39 @@ def main():
     print("⚙️  Procesando métricas...")
     videos = process_videos(rows, info)
 
+    print("📈 Obteniendo reportes diarios...")
+    daily_rows = get_daily_reports(analytics, START_DATE, END_DATE)
+    
+    # Calcular métricas diarias
+    avg_daily_min = 0
+    comp_data = {"today": 0, "yesterday": 0, "diff_pct": 0, "trend": "flat"}
+    
+    if daily_rows:
+        total_min = sum(row[1] for row in daily_rows)
+        avg_daily_min = total_min / len(daily_rows)
+        
+        # Comparación (últimos 2 días con datos)
+        if len(daily_rows) >= 2:
+            yest_min = daily_rows[-2][1]
+            today_min = daily_rows[-1][1]
+            diff = today_min - yest_min
+            diff_pct = (diff / yest_min * 100) if yest_min > 0 else 0
+            comp_data = {
+                "today": round(today_min / 60, 2),
+                "yesterday": round(yest_min / 60, 2),
+                "diff_pct": round(diff_pct, 1),
+                "trend": "up" if diff > 0 else ("down" if diff < 0 else "flat")
+            }
+        elif len(daily_rows) == 1:
+            comp_data["today"] = round(daily_rows[-1][1] / 60, 2)
+
+    daily_metrics = {
+        "avg_daily_hours": round(avg_daily_min / 60, 2),
+        "comparison": comp_data
+    }
+
     print("🖥️  Generando dashboard HTML...")
-    html = generate_html(videos, MONETIZATION_GOAL, channel_info)
+    html = generate_html(videos, MONETIZATION_GOAL, channel_info, daily_metrics)
 
     html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html")
     with open(html_path, "w", encoding="utf-8") as f:
