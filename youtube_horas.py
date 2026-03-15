@@ -18,7 +18,7 @@ CHANNEL_ID         = os.getenv("CHANNEL_ID", "UCiFazFymzsTLHTA2dvEsa8A")
 CLIENT_SECRET_FILE = os.getenv("CLIENT_SECRET_FILE", "client_secret.json")
 SCOPES             = ["https://www.googleapis.com/auth/yt-analytics.readonly"]
 
-START_DATE         = "2024-03-15"
+START_DATE         = datetime.now(timezone.utc).date().replace(month=1, day=1).strftime("%Y-%m-%d")
 END_DATE           = datetime.now(timezone.utc).date().strftime("%Y-%m-%d")
 MONETIZATION_GOAL  = 4000          # horas requeridas para monetizar
 MIN_DURATION_SEC   = 0             # Incluir todos los videos (incluyendo Shorts)
