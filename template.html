@@ -193,6 +193,7 @@ tbody tr:hover td{background:var(--surface2)}
             <th data-col="published">Fecha<span class="sort-icon"></span></th>
             <th data-col="duration">Duración<span class="sort-icon"></span></th>
             <th data-col="views">Vistas<span class="sort-icon"></span></th>
+            <th data-col="earnings">Ingresos Est.<span class="sort-icon"></span></th>
             <th data-col="minutes">Min. vistos<span class="sort-icon"></span></th>
             <th data-col="hours">Horas<span class="sort-icon"></span></th>
             <th data-col="min_view">Min/Vista<span class="sort-icon"></span></th>
@@ -212,7 +213,8 @@ tbody tr:hover td{background:var(--surface2)}
 </div>
 <script>
 const CONFIG={"startDate":"[[START_DATE]]","generatedAt":"[[GENERATED_AT]]","goal":[[GOAL]]};
-const VIDEOS=[[JS_VIDEOS]];
+const SIMULATED_RPM=1.50;
+const VIDEOS=[[JS_VIDEOS]].map(v=>({...v, earnings: (v.views/1000)*SIMULATED_RPM}));
 let sortCol='hours',sortDir='desc',filter='all',search='';
 const fmt=n=>n.toLocaleString('es-ES',{minimumFractionDigits:0,maximumFractionDigits:2});
 const fmtI=n=>Math.round(n).toLocaleString('es-ES');
@@ -223,6 +225,7 @@ const totalMins=()=>VIDEOS.reduce((s,v)=>s+v.minutes,0);
 const avgRet=()=>VIDEOS.reduce((s,v)=>s+v.retention,0)/VIDEOS.length;
 const avgMinView=()=>VIDEOS.reduce((s,v)=>s+v.min_view,0)/VIDEOS.length;
 const sumViewsDay=()=>VIDEOS.reduce((s,v)=>s+v.views_day,0);
+const totalEarnings=()=>VIDEOS.reduce((s,v)=>s+v.earnings,0);
 function retBadge(r){
   if(r>=40)return`<span class="badge badge-high">${r}%</span>`;
   if(r>=25)return`<span class="badge badge-mid">${r}%</span>`;
@@ -238,6 +241,7 @@ function renderCards(){
     {icon:'🎬',label:'Videos analizados',value:VIDEOS.length,cls:'accent',sub:`desde ${CONFIG.startDate}`},
     {icon:'⏱️',label:'Horas acumuladas',value:fmt(th),cls:'accent',sub:`de ${fmtI(CONFIG.goal)} necesarias`},
     {icon:'🏁',label:'Horas restantes',value:fmt(rem),cls:'',sub:`~${hpd.toFixed(1)} hrs/día actual`},
+    {icon:'💰',label:'Ingresos Est.',value:'$'+fmt(totalEarnings()),cls:'gold',sub:`simulado ($${SIMULATED_RPM} RPM)`},
     {icon:'👀',label:'Vistas totales',value:fmtI(totalViews()),cls:'',sub:'total del período'},
     {icon:'🔁',label:'Retención media',value:fmtP(avgRet()),cls:'gold',sub:'promedio entre videos'},
     {icon:'📅',label:'Vistas/día (total)',value:fmtI(sumViewsDay()),cls:'',sub:'suma de todos los videos'},
@@ -276,6 +280,7 @@ function renderTotals(){
   const totals=[
     {label:'Duración total',val:fmt(VIDEOS.reduce((s,v)=>s+v.duration,0))+' min'},
     {label:'Vistas totales',val:fmtI(totalViews())},
+    {label:'Ingresos Est.',val:'$'+fmt(totalEarnings())},
     {label:'Min. vistos totales',val:fmtI(totalMins())},
     {label:'Horas acumuladas',val:fmt(totalHours())},
     {label:'Min/Vista (prom.)',val:avgMinView().toFixed(2)},
@@ -311,10 +316,11 @@ function getFiltered(){
 }
 function renderTable(){
   const data=getFiltered(),maxM=Math.max(...VIDEOS.map(v=>v.minutes)),tbody=document.getElementById('table-body');
-  if(data.length===0){tbody.innerHTML=`<tr><td colspan="9"><div class="empty-state"><div class="big">🔍</div>No se encontraron videos.</div></td></tr>`;}
+  if(data.length===0){tbody.innerHTML=`<tr><td colspan="10"><div class="empty-state"><div class="big">🔍</div>No se encontraron videos.</div></td></tr>`;}
   else{tbody.innerHTML=data.map(v=>`<tr>
     <td><div class="video-cell"><div class="thumb-wrap"><img src="https://img.youtube.com/vi/${v.vid}/mqdefault.jpg" alt="thumbnail" loading="lazy"><div class="thumb-overlay">▶</div></div><a href="https://www.youtube.com/watch?v=${v.vid}" target="_blank" class="video-title">${v.title}</a></div></td>
     <td class="num">${v.published}</td><td class="num">${v.duration} min</td><td class="num">${fmtI(v.views)}</td>
+    <td class="num" style="color:var(--yellow);font-weight:700">$${fmt(v.earnings)}</td>
     <td>${miniBar(v.minutes,maxM)}</td><td><span class="hrs-value">${v.hours.toFixed(2)}</span></td>
     <td class="num">${v.min_view}</td><td>${retBadge(v.retention)}</td><td class="num">${v.views_day}</td>
   </tr>`).join('');}
