@@ -49,9 +49,9 @@ body{background:var(--bg);background-image:radial-gradient(ellipse 80% 50% at 50
 .progress-title{font-size:1rem;font-weight:700}
 .progress-pct{font-size:2.4rem;font-weight:800;color:var(--accent2);line-height:1;filter:drop-shadow(0 0 12px rgba(59,130,246,.5))}
 .progress-track{background:var(--surface3);border-radius:999px;height:22px;overflow:hidden;position:relative}
-.progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#1e3a8a,#3b82f6,#60a5fa,#93c5fd);background-size:200% 100%;animation:shimmer 3s linear infinite,glow-bar 2s ease-in-out infinite alternate;transition:width 1.5s cubic-bezier(.4,0,.2,1)}
+.progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#881337,#e11d48,#f43f5e,#fb7185);background-size:200% 100%;animation:shimmer 3s linear infinite,glow-bar 2s ease-in-out infinite alternate;transition:width 1.5s cubic-bezier(.4,0,.2,1)}
 @keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
-@keyframes glow-bar{from{box-shadow:0 0 10px #1e40af,0 0 3px #3b82f6}to{box-shadow:0 0 24px #3b82f6,0 0 8px #60a5fa}}
+@keyframes glow-bar{from{box-shadow:0 0 10px #9f1239,0 0 3px #e11d48}to{box-shadow:0 0 24px #e11d48,0 0 8px #f43f5e}}
 .progress-labels{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-top:10px}
 .prediction-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
 .prediction-item{flex:1;min-width:140px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px}
@@ -62,13 +62,13 @@ body{background:var(--bg);background-image:radial-gradient(ellipse 80% 50% at 50
 .chart-panel h3{font-size:.85rem;font-weight:600;color:var(--text2);margin-bottom:20px;display:flex;align-items:center;gap:8px}
 .toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
 .search-box{flex:1;min-width:200px;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;transition:border-color .2s,box-shadow .2s}
-.search-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.search-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(225,29,72,.15)}
 .search-box svg{flex-shrink:0;color:var(--muted)}
 .search-box input{background:none;border:none;outline:none;font-family:inherit;font-size:.88rem;color:var(--text);width:100%}
 .search-box input::placeholder{color:var(--muted)}
 .filter-btn{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text2);font-family:inherit;font-size:.82rem;cursor:pointer;transition:border-color .2s,color .2s,background .2s;white-space:nowrap}
 .filter-btn:hover{border-color:var(--border2);color:var(--text);background:var(--surface2)}
-.filter-btn.active{border-color:var(--accent);color:var(--accent2);background:rgba(59,130,246,.12)}
+.filter-btn.active{border-color:var(--accent);color:var(--accent2);background:rgba(225,29,72,.12)}
 .table-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .table-scroll{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:.855rem;min-width:900px}
@@ -99,7 +99,7 @@ tbody tr:hover td{background:var(--surface2)}
 .hrs-value{font-weight:800;font-size:.95rem;color:var(--accent2)}
 .mini-bar-wrap{min-width:90px}
 .mini-bar-bg{background:var(--surface3);border-radius:99px;height:5px;width:100%;margin-top:4px;overflow:hidden}
-.mini-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,#1e3a8a,#3b82f6)}
+.mini-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,#9f1239,#e11d48)}
 .empty-state{text-align:center;padding:60px 20px;color:var(--muted);font-size:.88rem}
 .empty-state .big{font-size:2.5rem;margin-bottom:10px}
 .totals-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px}
@@ -196,6 +196,7 @@ tbody tr:hover td{background:var(--surface2)}
             <th data-col="published">Fecha<span class="sort-icon"></span></th>
             <th data-col="duration">Duración<span class="sort-icon"></span></th>
             <th data-col="views">Vistas<span class="sort-icon"></span></th>
+            <th data-col="subs">Subs<span class="sort-icon"></span></th>
             <th data-col="earnings">Ingresos Est.<span class="sort-icon"></span></th>
             <th data-col="earnings_per_view">Ingreso/Vista<span class="sort-icon"></span></th>
             <th data-col="minutes">Min. vistos<span class="sort-icon"></span></th>
@@ -234,6 +235,7 @@ const avgRet=()=>VIDEOS.reduce((s,v)=>s+v.retention,0)/VIDEOS.length;
 const avgMinView=()=>VIDEOS.reduce((s,v)=>s+v.min_view,0)/VIDEOS.length;
 const sumViewsDay=()=>VIDEOS.reduce((s,v)=>s+v.views_day,0);
 const totalEarnings=()=>VIDEOS.reduce((s,v)=>s+v.earnings,0);
+const totalSubsGained=()=>VIDEOS.reduce((s,v)=>s+v.subs,0);
 function retBadge(r){
   if(r>=40)return`<span class="badge badge-high">${r}%</span>`;
   if(r>=25)return`<span class="badge badge-mid">${r}%</span>`;
@@ -248,11 +250,10 @@ function renderCards(){
   const cards=[
     {icon:'🎬',label:'Videos analizados',value:VIDEOS.length,cls:'accent',sub:`desde ${CONFIG.startDate}`},
     {icon:'⏱️',label:'Horas acumuladas',value:fmt(th),cls:'accent',sub:`de ${fmtI(CONFIG.goal)} necesarias`},
-    {icon:'🏁',label:'Horas restantes',value:fmt(rem),cls:'',sub:`~${hpd.toFixed(1)} hrs/día actual`},
+    {icon:'❤️',label:'Subs ganados',value:'+'+fmtI(totalSubsGained()),cls:'',sub:`por videos totales`},
     {icon:'💰',label:'Ingresos Est.',value:'$'+fmt(totalEarnings()),cls:'gold',sub:`simulado ($${SIMULATED_RPM} RPM)`},
     {icon:'👀',label:'Vistas totales',value:fmtI(totalViews()),cls:'',sub:'total del período'},
     {icon:'🔁',label:'Retención media',value:fmtP(avgRet()),cls:'gold',sub:'promedio entre videos'},
-    {icon:'📅',label:'Vistas/día (total)',value:fmtI(sumViewsDay()),cls:'',sub:'suma de todos los videos'},
   ];
   document.getElementById('cards-grid').innerHTML=cards.map(c=>`<div class="card"><div class="card-icon">${c.icon}</div><div class="card-label">${c.label}</div><div class="card-value ${c.cls}">${c.value}</div><div class="card-sub">${c.sub}</div></div>`).join('');
 }
@@ -288,6 +289,7 @@ function renderTotals(){
   const totals=[
     {label:'Duración total',val:fmt(VIDEOS.reduce((s,v)=>s+v.duration,0))+' min'},
     {label:'Vistas totales',val:fmtI(totalViews())},
+    {label:'Subs ganados',val:'+'+fmtI(totalSubsGained())},
     {label:'Ingresos Est.',val:'$'+fmt(totalEarnings())},
     {label:'Min. vistos totales',val:fmtI(totalMins())},
     {label:'Horas acumuladas',val:fmt(totalHours())},
@@ -300,10 +302,10 @@ function renderTotals(){
 function renderCharts(){
   const top10=[...VIDEOS].sort((a,b)=>b.hours-a.hours).slice(0,10);
   Chart.defaults.color='#cbd5e1';
-  const grid='rgba(148,163,184,.15)',tick='#94a3b8';
+  const grid='rgba(161,161,170,.15)',tick='#a1a1aa';
   new Chart(document.getElementById('chart-hours').getContext('2d'),{
     type:'bar',
-    data:{labels:top10.map(v=>v.title.length>30?v.title.slice(0,30)+'…':v.title),datasets:[{label:'Horas',data:top10.map(v=>v.hours),backgroundColor:top10.map((v,i)=>`rgba(59,130,246,${Math.max(0.2, 0.85-i*.05)})`),borderRadius:5,borderSkipped:false}]},
+    data:{labels:top10.map(v=>v.title.length>30?v.title.slice(0,30)+'…':v.title),datasets:[{label:'Horas',data:top10.map(v=>v.hours),backgroundColor:top10.map((v,i)=>`rgba(225,29,72,${Math.max(0.2, 0.85-i*.05)})`),borderRadius:5,borderSkipped:false}]},
     options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.raw.toFixed(2)} hrs`}}},scales:{x:{grid:{color:grid},ticks:{color:tick}},y:{grid:{display:false},ticks:{color:tick,font:{size:10}}}}}
   });
   const sorted=[...VIDEOS].sort((a,b)=>b.retention-a.retention);
@@ -328,6 +330,7 @@ function renderTable(){
   else{tbody.innerHTML=data.map(v=>`<tr>
     <td><div class="video-cell"><div class="thumb-wrap"><img src="https://img.youtube.com/vi/${v.vid}/mqdefault.jpg" alt="thumbnail" loading="lazy"><div class="thumb-overlay">▶</div></div><a href="https://www.youtube.com/watch?v=${v.vid}" target="_blank" class="video-title">${v.title}</a></div></td>
     <td class="num">${v.published}</td><td class="num">${v.duration} min</td><td class="num">${fmtI(v.views)}</td>
+    <td class="num" style="color:var(--green);font-weight:700">+${fmtI(v.subs)}</td>
     <td class="num" style="color:var(--yellow);font-weight:700">$${fmt(v.earnings)}</td>
     <td class="num" style="color:var(--accent3);font-size:0.75rem">$${v.earnings_per_view.toFixed(4)}</td>
     <td>${miniBar(v.minutes,maxM)}</td><td><span class="hrs-value">${v.hours.toFixed(2)}</span></td>

@@ -61,7 +61,7 @@ def get_analytics(analytics, start_date: str, end_date: str) -> list:
         ids="channel==MINE",
         startDate=start_date,
         endDate=end_date,
-        metrics="estimatedMinutesWatched,views",
+        metrics="estimatedMinutesWatched,views,subscribersGained",
         dimensions="video",
         sort="-estimatedMinutesWatched",
         maxResults=MAX_RESULTS,
@@ -124,7 +124,7 @@ def process_videos(rows: list, info: dict) -> list:
     result = []
 
     for row in rows:
-        vid, estimated_minutes, views = row[0], row[1], row[2]
+        vid, estimated_minutes, views, subs_gained = row[0], row[1], row[2], row[3] if len(row) > 3 else 0
 
         if vid not in info:
             continue
@@ -150,6 +150,7 @@ def process_videos(rows: list, info: dict) -> list:
             "min_view":  round(minutes_per_view, 2),
             "retention": round(retention, 1),
             "views_day": round(views_per_day, 1),
+            "subs":      subs_gained,
             "thumb":     f"https://img.youtube.com/vi/{vid}/mqdefault.jpg",
         })
 
@@ -175,6 +176,7 @@ def generate_html(videos: list, goal: float, channel_info: dict) -> str:
             "min_view":  v["min_view"],
             "retention": v["retention"],
             "views_day": v["views_day"],
+            "subs":      v["subs"],
         }
         for v in videos
     ], ensure_ascii=False, indent=2)
