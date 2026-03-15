@@ -118,10 +118,10 @@ tbody tr:hover td{background:var(--surface2)}
   <div class="hero-badge"><span class="dot"></span> Actualizado · YouTube Analytics</div>
   <div class="hero-thumb-wrap"><img src="https://yt3.ggpht.com/npAb917jLQQBMVVQcFtWijUIOXvQDMhE7hrnjAXdshuP5UyFkvjMBDBYoHY3OgsE3XEMa4EfjQ=s800-c-k-c0x00ffffff-no-rj" alt="Logo de Un Relato Oscuro" class="hero-thumb"></div>
   <h1>Un Relato Oscuro</h1>
-  <p class="hero-sub">2,160 Suscriptores &nbsp;·&nbsp; Seguimiento de monetización</p>
+  <p class="hero-sub">2,170 Suscriptores &nbsp;·&nbsp; Seguimiento de monetización</p>
   <div class="hero-meta">
-    <span class="hero-meta-item">🗓️ Período: <strong>2026-03-01 → hoy</strong></span>
-    <span class="hero-meta-item">🕐 Generado: <strong>15/03/2026 14:40</strong></span>
+    <span class="hero-meta-item">🗓️ Período: <strong>2024-03-15 → 2026-03-15</strong></span>
+    <span class="hero-meta-item">🕐 Generado: <strong>15/03/2026 17:19</strong></span>
     <span class="hero-meta-item">🎯 Meta: <strong>4,000 hrs</strong></span>
   </div>
 </div>
@@ -183,6 +183,12 @@ tbody tr:hover td{background:var(--surface2)}
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="search-input" placeholder="Buscar video…" autocomplete="off">
       </div>
+      <div class="filter-group" style="display:flex; align-items:center; gap:8px;">
+        <label style="font-size:0.75rem; color:var(--muted)">Desde:</label>
+        <input type="date" id="date-from" class="filter-btn" style="padding: 8px;">
+        <label style="font-size:0.75rem; color:var(--muted)">Hasta:</label>
+        <input type="date" id="date-to" class="filter-btn" style="padding: 8px;">
+      </div>
       <button class="filter-btn" id="btn-all"  onclick="setFilter('all')">Todos</button>
       <button class="filter-btn" id="btn-high" onclick="setFilter('high')">🔴 Retención ≥40%</button>
       <button class="filter-btn" id="btn-eng"  onclick="setFilter('eng')">🔥 Alto Engagement (>5%)</button>
@@ -217,11 +223,11 @@ tbody tr:hover td{background:var(--surface2)}
   </div>
 </div>
 <div class="footer container">
-  <p>YouTube Analytics Dashboard &nbsp;·&nbsp; 15/03/2026 14:40 &nbsp;·&nbsp; Un Relato Oscuro</p>
-  <p style="margin-top:6px">Período desde 2026-03-01 &nbsp;·&nbsp; Meta: 4,000 hrs</p>
+  <p>YouTube Analytics Dashboard &nbsp;·&nbsp; 15/03/2026 17:19 &nbsp;·&nbsp; Un Relato Oscuro</p>
+  <p style="margin-top:6px">Período 2024-03-15 al 2026-03-15 &nbsp;·&nbsp; Meta: 4,000 hrs</p>
 </div>
 <script>
-const CONFIG={"startDate":"2026-03-01","generatedAt":"15/03/2026 14:40","goal":4000};
+const CONFIG={"startDate":"2024-03-15","endDate":"2026-03-15","generatedAt":"15/03/2026 17:19","goal":4000,"daily":{"avg_daily_hours": 4.1, "comparison": {"today": 151.35, "yesterday": 114.05, "diff_pct": 32.7, "trend": "up"}}};
 const SIMULATED_RPM=1.50;
 const VIDEOS=[
   {
@@ -348,9 +354,9 @@ const VIDEOS=[
     "retention": 41.2,
     "views_day": 112.6,
     "subs": 5,
-    "likes": 26,
+    "likes": 28,
     "comments": 0,
-    "engagement": 4.62
+    "engagement": 4.97
   },
   {
     "vid": "9wBgLLuw9Xo",
@@ -460,9 +466,25 @@ const VIDEOS=[
     "retention": 41.6,
     "views_day": 21.7,
     "subs": 0,
-    "likes": 6,
+    "likes": 7,
     "comments": 0,
-    "engagement": 4.62
+    "engagement": 5.38
+  },
+  {
+    "vid": "5lqfdRO7SB8",
+    "title": "La  caja maldita de Helias",
+    "published": "2025-12-15",
+    "duration": 7.25,
+    "views": 2306,
+    "minutes": 1101,
+    "hours": 18.35,
+    "min_view": 0.48,
+    "retention": 6.6,
+    "views_day": 25.3,
+    "subs": 1,
+    "likes": 2,
+    "comments": 0,
+    "engagement": 0.09
   },
   {
     "vid": "C9sRAMfKz00",
@@ -559,13 +581,29 @@ const VIDEOS=[
     "likes": 2,
     "comments": 0,
     "engagement": 5.13
+  },
+  {
+    "vid": "9xd50TyxcIo",
+    "title": "The Bizarre Police Audio That Surprised Everyone",
+    "published": "2025-12-16",
+    "duration": 10.82,
+    "views": 84,
+    "minutes": 222,
+    "hours": 3.7,
+    "min_view": 2.64,
+    "retention": 24.4,
+    "views_day": 0.9,
+    "subs": 1,
+    "likes": 1,
+    "comments": 0,
+    "engagement": 1.19
   }
 ].map(v=>({
   ...v, 
   earnings: (v.views/1000)*SIMULATED_RPM,
   earnings_per_view: v.views > 0 ? ((v.views/1000)*SIMULATED_RPM) / v.views : 0
 }));
-let sortCol='hours',sortDir='desc',filter='all',search='';
+let sortCol='hours',sortDir='desc',filter='all',search='',dateFrom='',dateTo='';
 const fmt=n=>n.toLocaleString('es-ES',{minimumFractionDigits:0,maximumFractionDigits:2});
 const fmtI=n=>Math.round(n).toLocaleString('es-ES');
 const fmtP=n=>n.toFixed(1)+'%';
@@ -593,14 +631,19 @@ function miniBar(val,max){
   return`<div class="mini-bar-wrap"><div class="num">${fmt(val)}</div><div class="mini-bar-bg"><div class="mini-bar" style="width:${pct}%"></div></div></div>`;
 }
 function renderCards(){
-  const th=totalHours(),rem=Math.max(CONFIG.goal-th,0),hpd=th/9;
+  const th=totalHours(),rem=Math.max(CONFIG.goal-th,0);
+  const daily = CONFIG.daily;
+  const trendIcon = daily.comparison.trend === 'up' ? '↗️' : (daily.comparison.trend === 'down' ? '↘️' : '➡️');
+  const trendColor = daily.comparison.trend === 'up' ? 'var(--green)' : (daily.comparison.trend === 'down' ? 'var(--accent)' : 'var(--muted)');
+  const trendSign = daily.comparison.trend === 'up' ? '+' : '';
+
   const cards=[
     {icon:'🎬',label:'Videos analizados',value:VIDEOS.length,cls:'accent',sub:`desde ${CONFIG.startDate}`},
     {icon:'⏱️',label:'Horas acumuladas',value:fmt(th),cls:'accent',sub:`de ${fmtI(CONFIG.goal)} necesarias`},
+    {icon:'📅',label:'Promedio Diario',value:fmt(daily.avg_daily_hours) + ' h',cls:'gold',sub:`basado en datos históricos`},
+    {icon:trendIcon,label:'Tendencia (Hoy vs Ayer)',value: daily.comparison.today + ' h',cls:'',sub:`<span style="color:${trendColor};font-weight:700">${trendSign}${daily.comparison.diff_pct}%</span> vs ayer (${daily.comparison.yesterday}h)`},
     {icon:'❤️',label:'Subs ganados',value:'+'+fmtI(totalSubsGained()),cls:'',sub:`por videos totales`},
     {icon:'💰',label:'Ingresos Est.',value:'$'+fmt(totalEarnings()),cls:'gold',sub:`simulado ($${SIMULATED_RPM} RPM)`},
-    {icon:'👀',label:'Vistas totales',value:fmtI(totalViews()),cls:'',sub:'total del período'},
-    {icon:'🔁',label:'Retención media',value:fmtP(avgRet()),cls:'gold',sub:'promedio entre videos'},
   ];
   document.getElementById('cards-grid').innerHTML=cards.map(c=>`<div class="card"><div class="card-icon">${c.icon}</div><div class="card-label">${c.label}</div><div class="card-value ${c.cls}">${c.value}</div><div class="card-sub">${c.sub}</div></div>`).join('');
 }
@@ -633,38 +676,49 @@ function renderProgress(){
     <div class="prediction-item"><div class="plabel">Hrs semanales (prom.)</div><div class="pval">${(hpd*7).toFixed(0)} hrs/sem</div></div>`;
 }
 function renderTotals(){
+  const data=getFiltered();
   const totals=[
-    {label:'Duración total',val:fmt(VIDEOS.reduce((s,v)=>s+v.duration,0))+' min'},
-    {label:'Vistas totales',val:fmtI(totalViews())},
-    {label:'Subs ganados',val:'+'+fmtI(totalSubsGained())},
-    {label:'Engagement (prom.)',val:fmtP(avgEng())},
-    {label:'Ingresos Est.',val:'$'+fmt(totalEarnings())},
-    {label:'Min. vistos totales',val:fmtI(totalMins())},
-    {label:'Horas acumuladas',val:fmt(totalHours())},
-    {label:'Min/Vista (prom.)',val:avgMinView().toFixed(2)},
-    {label:'Retención (prom.)',val:fmtP(avgRet())},
-    {label:'Vistas/día (total)',val:fmt(sumViewsDay())},
+    {label:'Duración total',val:fmt(data.reduce((s,v)=>s+v.duration,0))+' min'},
+    {label:'Vistas totales',val:fmtI(data.reduce((s,v)=>s+v.views,0))},
+    {label:'Subs ganados',val:'+'+fmtI(data.reduce((s,v)=>s+v.subs,0))},
+    {label:'Engagement (prom.)',val:fmtP(data.length > 0 ? data.reduce((s,v)=>s+v.engagement,0)/data.length : 0)},
+    {label:'Ingresos Est.',val:'$'+fmt(data.reduce((s,v)=>s+v.earnings,0))},
+    {label:'Min. vistos totales',val:fmtI(data.reduce((s,v)=>s+v.minutes,0))},
+    {label:'Horas acumuladas',val:fmt(data.reduce((s,v)=>s+v.hours,0))},
+    {label:'Min/Vista (prom.)',val:(data.length > 0 ? data.reduce((s,v)=>s+v.min_view,0)/data.length : 0).toFixed(2)},
+    {label:'Retención (prom.)',val:fmtP(data.length > 0 ? data.reduce((s,v)=>s+v.retention,0)/data.length : 0)},
+    {label:'Vistas/día (total)',val:fmt(data.reduce((s,v)=>s+v.views_day,0))},
   ];
   document.getElementById('totals-grid').innerHTML=totals.map(t=>`<div class="total-item"><div class="total-label">${t.label}</div><div class="total-val">${t.val}</div></div>`).join('');
 }
 function renderCharts(){
-  const top10=[...VIDEOS].sort((a,b)=>b.hours-a.hours).slice(0,10);
+  const data=getFiltered();
+  const top10=[...data].sort((a,b)=>b.hours-a.hours).slice(0,10);
+  const chartHoursElem = document.getElementById('chart-hours');
+  const chartRetentionElem = document.getElementById('chart-retention');
+  const chartSubsElem = document.getElementById('chart-subs');
+  
+  // Clear existing charts if any
+  Chart.getChart(chartHoursElem)?.destroy();
+  Chart.getChart(chartRetentionElem)?.destroy();
+  Chart.getChart(chartSubsElem)?.destroy();
+
   Chart.defaults.color='#cbd5e1';
   const grid='rgba(161,161,170,.15)',tick='#a1a1aa';
-  new Chart(document.getElementById('chart-hours').getContext('2d'),{
+  new Chart(chartHoursElem.getContext('2d'),{
     type:'bar',
     data:{labels:top10.map(v=>v.title.length>30?v.title.slice(0,30)+'…':v.title),datasets:[{label:'Horas',data:top10.map(v=>v.hours),backgroundColor:top10.map((v,i)=>`rgba(225,29,72,${Math.max(0.2, 0.85-i*.05)})`),borderRadius:5,borderSkipped:false}]},
     options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.raw.toFixed(2)} hrs`}}},scales:{x:{grid:{color:grid},ticks:{color:tick}},y:{grid:{display:false},ticks:{color:tick,font:{size:10}}}}}
   });
-  const sorted=[...VIDEOS].sort((a,b)=>b.retention-a.retention);
-  new Chart(document.getElementById('chart-retention').getContext('2d'),{
+  const sorted=[...data].sort((a,b)=>b.retention-a.retention);
+  new Chart(chartRetentionElem.getContext('2d'),{
     type:'bar',
     data:{labels:sorted.map(v=>v.title.length>28?v.title.slice(0,28)+'…':v.title),datasets:[{label:'%',data:sorted.map(v=>v.retention),backgroundColor:sorted.map(v=>v.retention>=40?'rgba(16,185,129,.8)':v.retention>=25?'rgba(251,191,36,.8)':'rgba(239,68,68,.8)'),borderRadius:5,borderSkipped:false}]},
     options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.raw}% retención`}}},scales:{x:{grid:{color:grid},ticks:{color:tick},min:0,max:70},y:{grid:{display:false},ticks:{color:tick,font:{size:10}}}}}
   });
   
-  const topSubs=[...VIDEOS].filter(v=>v.subs>0).sort((a,b)=>b.subs-a.subs).slice(0,7);
-  new Chart(document.getElementById('chart-subs').getContext('2d'),{
+  const topSubs=[...data].filter(v=>v.subs>0).sort((a,b)=>b.subs-a.subs).slice(0,7);
+  new Chart(chartSubsElem.getContext('2d'),{
     type:'bar',
     data:{labels:topSubs.map(v=>v.title.length>45?v.title.slice(0,45)+'…':v.title),datasets:[{label:'Subs',data:topSubs.map(v=>v.subs),backgroundColor:topSubs.map((v,i)=>`rgba(16,185,129,${Math.max(0.3, 0.9-i*.08)})`),borderRadius:5,borderSkipped:false}]},
     options:{responsive:true,indexAxis:'x',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` +${ctx.raw} subs`}}},scales:{x:{grid:{display:false},ticks:{color:tick,font:{size:10}}},y:{grid:{color:grid},ticks:{color:tick}}}}
@@ -673,6 +727,8 @@ function renderCharts(){
 function getFiltered(){
   let data=[...VIDEOS];
   if(search){const q=search.toLowerCase();data=data.filter(v=>v.title.toLowerCase().includes(q));}
+  if(dateFrom) data=data.filter(v=>v.published>=dateFrom);
+  if(dateTo)   data=data.filter(v=>v.published<=dateTo);
   if(filter==='high')data=data.filter(v=>v.retention>=40);
   if(filter==='eng')data=data.filter(v=>v.engagement>=5);
   if(filter==='mid')data=data.filter(v=>v.retention>=25&&v.retention<40);
@@ -698,10 +754,13 @@ function renderTable(){
   document.querySelectorAll('th[data-col]').forEach(th=>{th.classList.remove('sorted-asc','sorted-desc');if(th.dataset.col===sortCol)th.classList.add(sortDir==='asc'?'sorted-asc':'sorted-desc');});
 }
 document.querySelectorAll('th[data-col]').forEach(th=>{th.addEventListener('click',()=>{const col=th.dataset.col;if(sortCol===col){sortDir=sortDir==='asc'?'desc':'asc';}else{sortCol=col;sortDir='desc';}renderTable();});});
-document.getElementById('search-input').addEventListener('input',e=>{search=e.target.value.trim();renderTable();});
-function setFilter(f){filter=f;['all','high','eng','mid','low'].forEach(id=>document.getElementById('btn-'+id).classList.toggle('active',id===f));renderTable();}
-function clearSearch(){search='';filter='all';document.getElementById('search-input').value='';setFilter('all');}
-renderCards();renderProgress();renderTotals();renderTable();renderCharts();setFilter('all');
+document.getElementById('search-input').addEventListener('input',e=>{search=e.target.value.trim();renderAll();});
+document.getElementById('date-from').addEventListener('change',e=>{dateFrom=e.target.value;renderAll();});
+document.getElementById('date-to').addEventListener('change',e=>{dateTo=e.target.value;renderAll();});
+function setFilter(f){filter=f;['all','high','eng','mid','low'].forEach(id=>document.getElementById('btn-'+id).classList.toggle('active',id===f));renderAll();}
+function clearSearch(){search='';filter='all';dateFrom='';dateTo='';document.getElementById('search-input').value='';document.getElementById('date-from').value='';document.getElementById('date-to').value='';setFilter('all');}
+function renderAll(){renderCards();renderProgress();renderTotals();renderTable();renderCharts();}
+renderAll();setFilter('all');
 </script>
 </body>
 </html>
