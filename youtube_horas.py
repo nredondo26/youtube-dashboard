@@ -87,19 +87,49 @@ def get_daily_reports(analytics, start_date: str, end_date: str) -> list:
 # ─────────────────────────────────────────────
 def get_channel_info(youtube) -> dict:
     res = youtube.channels().list(
-        part="snippet,statistics",
+        part="snippet,statistics,contentDetails",
         id=CHANNEL_ID
     ).execute()
 
     if not res.get("items"):
-        return {"title": "Canal de YouTube", "thumb": "", "subs": 0}
+        return {"title": "Canal de YouTube", "thumb": "", "subs": 0, "uploads_id": ""}
 
     item = res["items"][0]
     return {
         "title": item["snippet"]["title"],
         "thumb": item["snippet"]["thumbnails"].get("high", item["snippet"]["thumbnails"].get("default", {}))["url"],
-        "subs":  int(item["statistics"].get("subscriberCount", 0))
+        "subs":  int(item["statistics"].get("subscriberCount", 0)),
+        "uploads_id": item["contentDetails"]["relatedPlaylists"]["uploads"]
     }
+
+def get_all_uploads(youtube, uploads_playlist_id, start_date_str) -> list:
+    """Obtiene todos los videos de la playlist de subidas filtrados por fecha."""
+    video_ids = []
+    next_page_token = None
+    start_dt = datetime.strptime(start_date_str, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+    
+    while True:
+        res = youtube.playlistItems().list(
+            part="snippet,contentDetails",
+            playlistId=uploads_playlist_id,
+            maxResults=50,
+            pageToken=next_page_token
+        ).execute()
+        
+        for item in res.get("items", []):
+            published_at_str = item["snippet"]["publishedAt"]
+            published_at = datetime.fromisoformat(published_at_str.replace("Z", "+00:00"))
+            
+            if published_at < start_dt:
+                return video_ids # Ya llegamos a videos más antiguos
+            
+            video_ids.append(item["contentDetails"]["videoId"])
+            
+        next_page_token = res.get("nextPageToken")
+        if not next_page_token:
+            break
+            
+    return video_ids
 
 
 # ─────────────────────────────────────────────
@@ -233,19 +263,32 @@ def main():
     print("[Autenticando]...")
     analytics, youtube = authenticate()
 
-    print(f"[Obteniendo analytics] ({START_DATE} -> {END_DATE})...")
-    rows      = get_analytics(analytics, START_DATE, END_DATE)
-    video_ids = [r[0] for r in rows]
-
-    start_date_dt = datetime.strptime(START_DATE, "%Y-%m-%d")
-    print(f"[Obteniendo detalles] de {len(video_ids)} videos...")
-    info = get_video_details(youtube, video_ids, start_date_dt)
-
-    print("[Obteniendo información del canal]...")
+    print("[Obteniendo informacíón del canal]...")
     channel_info = get_channel_info(youtube)
 
+    print(f"[Listando videos subidos desde {START_DATE}]...")
+    video_ids_all = get_all_uploads(youtube, channel_info["uploads_id"], START_DATE)
+
+    start_date_dt = datetime.strptime(START_DATE, "%Y-%m-%d")
+    print(f"[Analizando duración de] {len(video_ids_all)} videos...")
+    info = get_video_details(youtube, video_ids_all, start_date_dt)
+    
+    # Lista final de IDs que cumplen el filtro de duración
+    valid_video_ids = list(info.keys())
+
+    print(f"[Obteniendo analytics] ({START_DATE} -> {END_DATE})...")
+    analytics_rows = get_analytics(analytics, START_DATE, END_DATE)
+    # Convertir a dict para búsqueda rápida: {video_id: [estimatedMinutes, views, subs]}
+    analytics_map = {r[0]: r[1:] for r in analytics_rows}
+
     print("[Procesando métricas]...")
-    videos = process_videos(rows, info)
+    # Preparar filas simulando el formato de analytics para procesar todos los videos válidos
+    merged_rows = []
+    for vid in valid_video_ids:
+        stats = analytics_map.get(vid, [0, 0, 0]) # 0 si no hay datos aún
+        merged_rows.append([vid] + stats)
+
+    videos = process_videos(merged_rows, info)
 
     print("[Obteniendo reportes diarios]...")
     daily_rows = get_daily_reports(analytics, START_DATE, END_DATE)
