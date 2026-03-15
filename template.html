@@ -194,6 +194,7 @@ tbody tr:hover td{background:var(--surface2)}
             <th data-col="duration">Duración<span class="sort-icon"></span></th>
             <th data-col="views">Vistas<span class="sort-icon"></span></th>
             <th data-col="earnings">Ingresos Est.<span class="sort-icon"></span></th>
+            <th data-col="earnings_per_view">Ingreso/Vista<span class="sort-icon"></span></th>
             <th data-col="minutes">Min. vistos<span class="sort-icon"></span></th>
             <th data-col="hours">Horas<span class="sort-icon"></span></th>
             <th data-col="min_view">Min/Vista<span class="sort-icon"></span></th>
@@ -214,7 +215,11 @@ tbody tr:hover td{background:var(--surface2)}
 <script>
 const CONFIG={"startDate":"[[START_DATE]]","generatedAt":"[[GENERATED_AT]]","goal":[[GOAL]]};
 const SIMULATED_RPM=1.50;
-const VIDEOS=[[JS_VIDEOS]].map(v=>({...v, earnings: (v.views/1000)*SIMULATED_RPM}));
+const VIDEOS=[[JS_VIDEOS]].map(v=>({
+  ...v, 
+  earnings: (v.views/1000)*SIMULATED_RPM,
+  earnings_per_view: v.views > 0 ? ((v.views/1000)*SIMULATED_RPM) / v.views : 0
+}));
 let sortCol='hours',sortDir='desc',filter='all',search='';
 const fmt=n=>n.toLocaleString('es-ES',{minimumFractionDigits:0,maximumFractionDigits:2});
 const fmtI=n=>Math.round(n).toLocaleString('es-ES');
@@ -316,11 +321,12 @@ function getFiltered(){
 }
 function renderTable(){
   const data=getFiltered(),maxM=Math.max(...VIDEOS.map(v=>v.minutes)),tbody=document.getElementById('table-body');
-  if(data.length===0){tbody.innerHTML=`<tr><td colspan="10"><div class="empty-state"><div class="big">🔍</div>No se encontraron videos.</div></td></tr>`;}
+  if(data.length===0){tbody.innerHTML=`<tr><td colspan="11"><div class="empty-state"><div class="big">🔍</div>No se encontraron videos.</div></td></tr>`;}
   else{tbody.innerHTML=data.map(v=>`<tr>
     <td><div class="video-cell"><div class="thumb-wrap"><img src="https://img.youtube.com/vi/${v.vid}/mqdefault.jpg" alt="thumbnail" loading="lazy"><div class="thumb-overlay">▶</div></div><a href="https://www.youtube.com/watch?v=${v.vid}" target="_blank" class="video-title">${v.title}</a></div></td>
     <td class="num">${v.published}</td><td class="num">${v.duration} min</td><td class="num">${fmtI(v.views)}</td>
     <td class="num" style="color:var(--yellow);font-weight:700">$${fmt(v.earnings)}</td>
+    <td class="num" style="color:var(--accent3);font-size:0.75rem">$${v.earnings_per_view.toFixed(4)}</td>
     <td>${miniBar(v.minutes,maxM)}</td><td><span class="hrs-value">${v.hours.toFixed(2)}</span></td>
     <td class="num">${v.min_view}</td><td>${retBadge(v.retention)}</td><td class="num">${v.views_day}</td>
   </tr>`).join('');}
