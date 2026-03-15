@@ -9,20 +9,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#0f172a;--bg2:#1e293b;--surface:#1e293b;--surface2:#334155;--surface3:#475569;
-  --border:#334155;--border2:#475569;--accent:#3b82f6;--accent2:#60a5fa;--accent3:#93c5fd;
-  --text:#f8fafc;--text2:#cbd5e1;--muted:#94a3b8;--green:#10b981;--yellow:#fbbf24;
-  --radius:14px;--radius-sm:8px;--glow:0 0 20px rgba(59,130,246,.35);
+  --bg:#09090b;--bg2:#18181b;--surface:#18181b;--surface2:#27272a;--surface3:#3f3f46;
+  --border:#27272a;--border2:#3f3f46;--accent:#e11d48;--accent2:#f43f5e;--accent3:#fb7185;
+  --text:#fafafa;--text2:#a1a1aa;--muted:#71717a;--green:#10b981;--yellow:#fbbf24;
+  --radius:14px;--radius-sm:8px;--glow:0 0 20px rgba(225,29,72,.35);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);background-image:radial-gradient(ellipse 80% 50% at 50% -10%,#1e3a8a 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,#0f172a 0%,transparent 50%);font-family:'Inter',system-ui,sans-serif;color:var(--text);min-height:100vh;padding:0 0 60px;overflow-x:hidden}
+body{background:var(--bg);background-image:radial-gradient(ellipse 80% 50% at 50% -10%,#4c0519 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,#09090b 0%,transparent 50%);font-family:'Inter',system-ui,sans-serif;color:var(--text);min-height:100vh;padding:0 0 60px;overflow-x:hidden}
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}::-webkit-scrollbar-thumb:hover{background:var(--accent)}
 .hero{position:relative;text-align:center;padding:54px 24px 48px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#0f172a 0%,transparent 100%);overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 100% 100% at 50% 0%,rgba(59,130,246,.12) 0%,transparent 70%);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(59,130,246,.15);border:1px solid var(--border2);border-radius:99px;padding:6px 16px;font-size:.75rem;color:var(--accent2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;animation:pulse-border 3s ease-in-out infinite}
-@keyframes pulse-border{0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,0);border-color:#334155}50%{box-shadow:0 0 12px 2px rgba(59,130,246,.3);border-color:#3b82f6}}
-.hero h1{font-family:'Inter',sans-serif;font-weight:800;font-size:clamp(2.2rem,5vw,3.6rem);letter-spacing:.02em;background:linear-gradient(135deg,#60a5fa 0%,#3b82f6 40%,#93c5fd 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 18px rgba(59,130,246,.5));line-height:1.1}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 100% 100% at 50% 0%,rgba(225,29,72,.12) 0%,transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(225,29,72,.15);border:1px solid var(--border2);border-radius:99px;padding:6px 16px;font-size:.75rem;color:var(--accent2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;animation:pulse-border 3s ease-in-out infinite}
+@keyframes pulse-border{0%,100%{box-shadow:0 0 0 0 rgba(225,29,72,0);border-color:#27272a}50%{box-shadow:0 0 12px 2px rgba(225,29,72,.3);border-color:#e11d48}}
+.hero h1{font-family:'Creepster',cursive;font-weight:400;font-size:clamp(2.8rem,6vw,4.5rem);letter-spacing:.05em;background:linear-gradient(135deg,#fb7185 0%,#e11d48 40%,#9f1239 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 18px rgba(225,29,72,.5));line-height:1.2}
+.hero-thumb-wrap { width: 96px; height: 96px; margin: 0 auto 16px; border-radius: 50%; padding: 4px; background: linear-gradient(135deg, #f43f5e, #9f1239); box-shadow: 0 0 25px rgba(225,29,72,.4); position: relative; z-index: 10; }
+.hero-thumb { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: var(--bg2); }
 .hero-sub{color:var(--muted);font-size:.88rem;margin-top:10px;letter-spacing:.02em}
 .hero-meta{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:22px;flex-wrap:wrap}
 .hero-meta-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted)}
@@ -47,9 +49,9 @@ body{background:var(--bg);background-image:radial-gradient(ellipse 80% 50% at 50
 .progress-title{font-size:1rem;font-weight:700}
 .progress-pct{font-size:2.4rem;font-weight:800;color:var(--accent2);line-height:1;filter:drop-shadow(0 0 12px rgba(59,130,246,.5))}
 .progress-track{background:var(--surface3);border-radius:999px;height:22px;overflow:hidden;position:relative}
-.progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#1e3a8a,#3b82f6,#60a5fa,#93c5fd);background-size:200% 100%;animation:shimmer 3s linear infinite,glow-bar 2s ease-in-out infinite alternate;transition:width 1.5s cubic-bezier(.4,0,.2,1)}
+.progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#881337,#e11d48,#f43f5e,#fb7185);background-size:200% 100%;animation:shimmer 3s linear infinite,glow-bar 2s ease-in-out infinite alternate;transition:width 1.5s cubic-bezier(.4,0,.2,1)}
 @keyframes shimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
-@keyframes glow-bar{from{box-shadow:0 0 10px #1e40af,0 0 3px #3b82f6}to{box-shadow:0 0 24px #3b82f6,0 0 8px #60a5fa}}
+@keyframes glow-bar{from{box-shadow:0 0 10px #9f1239,0 0 3px #e11d48}to{box-shadow:0 0 24px #e11d48,0 0 8px #f43f5e}}
 .progress-labels{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-top:10px}
 .prediction-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
 .prediction-item{flex:1;min-width:140px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px}
@@ -60,13 +62,13 @@ body{background:var(--bg);background-image:radial-gradient(ellipse 80% 50% at 50
 .chart-panel h3{font-size:.85rem;font-weight:600;color:var(--text2);margin-bottom:20px;display:flex;align-items:center;gap:8px}
 .toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
 .search-box{flex:1;min-width:200px;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;transition:border-color .2s,box-shadow .2s}
-.search-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+.search-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(225,29,72,.15)}
 .search-box svg{flex-shrink:0;color:var(--muted)}
 .search-box input{background:none;border:none;outline:none;font-family:inherit;font-size:.88rem;color:var(--text);width:100%}
 .search-box input::placeholder{color:var(--muted)}
 .filter-btn{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text2);font-family:inherit;font-size:.82rem;cursor:pointer;transition:border-color .2s,color .2s,background .2s;white-space:nowrap}
 .filter-btn:hover{border-color:var(--border2);color:var(--text);background:var(--surface2)}
-.filter-btn.active{border-color:var(--accent);color:var(--accent2);background:rgba(59,130,246,.12)}
+.filter-btn.active{border-color:var(--accent);color:var(--accent2);background:rgba(225,29,72,.12)}
 .table-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .table-scroll{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:.855rem;min-width:900px}
@@ -97,7 +99,7 @@ tbody tr:hover td{background:var(--surface2)}
 .hrs-value{font-weight:800;font-size:.95rem;color:var(--accent2)}
 .mini-bar-wrap{min-width:90px}
 .mini-bar-bg{background:var(--surface3);border-radius:99px;height:5px;width:100%;margin-top:4px;overflow:hidden}
-.mini-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,#1e3a8a,#3b82f6)}
+.mini-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,#9f1239,#e11d48)}
 .empty-state{text-align:center;padding:60px 20px;color:var(--muted);font-size:.88rem}
 .empty-state .big{font-size:2.5rem;margin-bottom:10px}
 .totals-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px 24px}
@@ -113,12 +115,13 @@ tbody tr:hover td{background:var(--surface2)}
 </head>
 <body>
 <div class="hero">
-  <div class="hero-badge"><span class="dot"></span> Actualizado · Canal de Terror</div>
-  <h1>📊 YouTube Analytics Dashboard</h1>
-  <p class="hero-sub">Seguimiento de horas de reproducción hacia monetización</p>
+  <div class="hero-badge"><span class="dot"></span> Actualizado · YouTube Analytics</div>
+  <div class="hero-thumb-wrap"><img src="https://yt3.ggpht.com/npAb917jLQQBMVVQcFtWijUIOXvQDMhE7hrnjAXdshuP5UyFkvjMBDBYoHY3OgsE3XEMa4EfjQ=s800-c-k-c0x00ffffff-no-rj" alt="Logo de Un Relato Oscuro" class="hero-thumb"></div>
+  <h1>Un Relato Oscuro</h1>
+  <p class="hero-sub">2,160 Suscriptores &nbsp;·&nbsp; Seguimiento de monetización</p>
   <div class="hero-meta">
     <span class="hero-meta-item">🗓️ Período: <strong>2026-03-01 → hoy</strong></span>
-    <span class="hero-meta-item">🕐 Generado: <strong>15/03/2026 00:40</strong></span>
+    <span class="hero-meta-item">🕐 Generado: <strong>15/03/2026 01:12</strong></span>
     <span class="hero-meta-item">🎯 Meta: <strong>4,000 hrs</strong></span>
   </div>
 </div>
@@ -193,6 +196,7 @@ tbody tr:hover td{background:var(--surface2)}
             <th data-col="published">Fecha<span class="sort-icon"></span></th>
             <th data-col="duration">Duración<span class="sort-icon"></span></th>
             <th data-col="views">Vistas<span class="sort-icon"></span></th>
+            <th data-col="subs">Subs<span class="sort-icon"></span></th>
             <th data-col="earnings">Ingresos Est.<span class="sort-icon"></span></th>
             <th data-col="earnings_per_view">Ingreso/Vista<span class="sort-icon"></span></th>
             <th data-col="minutes">Min. vistos<span class="sort-icon"></span></th>
@@ -209,11 +213,11 @@ tbody tr:hover td{background:var(--surface2)}
   </div>
 </div>
 <div class="footer container">
-  <p>YouTube Analytics Dashboard &nbsp;·&nbsp; 15/03/2026 00:40 &nbsp;·&nbsp; Canal de Terror</p>
+  <p>YouTube Analytics Dashboard &nbsp;·&nbsp; 15/03/2026 01:12 &nbsp;·&nbsp; Un Relato Oscuro</p>
   <p style="margin-top:6px">Período desde 2026-03-01 &nbsp;·&nbsp; Meta: 4,000 hrs</p>
 </div>
 <script>
-const CONFIG={"startDate":"2026-03-01","generatedAt":"15/03/2026 00:40","goal":4000};
+const CONFIG={"startDate":"2026-03-01","generatedAt":"15/03/2026 01:12","goal":4000};
 const SIMULATED_RPM=1.50;
 const VIDEOS=[
   {
@@ -226,7 +230,8 @@ const VIDEOS=[
     "hours": 310.87,
     "min_view": 4.46,
     "retention": 46.8,
-    "views_day": 465.0
+    "views_day": 465.0,
+    "subs": 22
   },
   {
     "vid": "Bg-Ub3aqp_Q",
@@ -238,7 +243,8 @@ const VIDEOS=[
     "hours": 242.07,
     "min_view": 11.11,
     "retention": 44.1,
-    "views_day": 93.4
+    "views_day": 93.4,
+    "subs": 14
   },
   {
     "vid": "9nmu_gjXQRo",
@@ -250,7 +256,8 @@ const VIDEOS=[
     "hours": 181.37,
     "min_view": 10.48,
     "retention": 34.7,
-    "views_day": 74.1
+    "views_day": 74.1,
+    "subs": 4
   },
   {
     "vid": "CJZq4EZnpHs",
@@ -262,7 +269,8 @@ const VIDEOS=[
     "hours": 124.83,
     "min_view": 4.88,
     "retention": 32.5,
-    "views_day": 191.8
+    "views_day": 191.8,
+    "subs": 11
   },
   {
     "vid": "psxVc6wlhbs",
@@ -274,7 +282,8 @@ const VIDEOS=[
     "hours": 120.1,
     "min_view": 7.41,
     "retention": 44.0,
-    "views_day": 64.8
+    "views_day": 64.8,
+    "subs": 11
   },
   {
     "vid": "iOi7aHbkfVI",
@@ -286,7 +295,8 @@ const VIDEOS=[
     "hours": 119.45,
     "min_view": 4.69,
     "retention": 31.4,
-    "views_day": 218.3
+    "views_day": 218.3,
+    "subs": 11
   },
   {
     "vid": "gaN54dLaDAs",
@@ -298,7 +308,8 @@ const VIDEOS=[
     "hours": 63.3,
     "min_view": 32.74,
     "retention": 28.6,
-    "views_day": 10.5
+    "views_day": 10.5,
+    "subs": 3
   },
   {
     "vid": "lt_NnyqTw7w",
@@ -310,7 +321,8 @@ const VIDEOS=[
     "hours": 63.27,
     "min_view": 6.74,
     "retention": 41.2,
-    "views_day": 112.6
+    "views_day": 112.6,
+    "subs": 5
   },
   {
     "vid": "9wBgLLuw9Xo",
@@ -322,7 +334,8 @@ const VIDEOS=[
     "hours": 62.18,
     "min_view": 13.14,
     "retention": 43.5,
-    "views_day": 23.7
+    "views_day": 23.7,
+    "subs": 6
   },
   {
     "vid": "AG_IikU7I3M",
@@ -334,7 +347,8 @@ const VIDEOS=[
     "hours": 45.72,
     "min_view": 4.26,
     "retention": 37.0,
-    "views_day": 64.4
+    "views_day": 64.4,
+    "subs": 2
   },
   {
     "vid": "l8xhb-tUjGw",
@@ -346,7 +360,8 @@ const VIDEOS=[
     "hours": 41.68,
     "min_view": 3.17,
     "retention": 29.2,
-    "views_day": 65.7
+    "views_day": 65.7,
+    "subs": 3
   },
   {
     "vid": "agVXtSiRlac",
@@ -358,7 +373,8 @@ const VIDEOS=[
     "hours": 40.65,
     "min_view": 15.15,
     "retention": 26.8,
-    "views_day": 20.1
+    "views_day": 20.1,
+    "subs": 0
   },
   {
     "vid": "Yuv1fT4t1Ps",
@@ -370,7 +386,8 @@ const VIDEOS=[
     "hours": 24.27,
     "min_view": 4.94,
     "retention": 41.1,
-    "views_day": 59.0
+    "views_day": 59.0,
+    "subs": 2
   },
   {
     "vid": "5SScSJtRXFk",
@@ -382,7 +399,8 @@ const VIDEOS=[
     "hours": 22.43,
     "min_view": 9.82,
     "retention": 46.9,
-    "views_day": 9.1
+    "views_day": 9.1,
+    "subs": 1
   },
   {
     "vid": "80QvmMU5rbE",
@@ -394,7 +412,8 @@ const VIDEOS=[
     "hours": 19.6,
     "min_view": 8.98,
     "retention": 41.3,
-    "views_day": 21.8
+    "views_day": 21.8,
+    "subs": 0
   },
   {
     "vid": "C9sRAMfKz00",
@@ -406,7 +425,8 @@ const VIDEOS=[
     "hours": 17.48,
     "min_view": 2.42,
     "retention": 20.3,
-    "views_day": 36.2
+    "views_day": 36.2,
+    "subs": 0
   },
   {
     "vid": "6TBDudbs1Us",
@@ -418,7 +438,8 @@ const VIDEOS=[
     "hours": 14.52,
     "min_view": 6.91,
     "retention": 25.8,
-    "views_day": 12.6
+    "views_day": 12.6,
+    "subs": 0
   },
   {
     "vid": "4LU5X2ME4js",
@@ -430,7 +451,8 @@ const VIDEOS=[
     "hours": 13.55,
     "min_view": 4.02,
     "retention": 36.1,
-    "views_day": 14.4
+    "views_day": 14.4,
+    "subs": 1
   },
   {
     "vid": "5ED5DfrGkkA",
@@ -442,7 +464,8 @@ const VIDEOS=[
     "hours": 12.35,
     "min_view": 8.23,
     "retention": 14.9,
-    "views_day": 12.9
+    "views_day": 12.9,
+    "subs": 1
   },
   {
     "vid": "nZRWYLOf7G8",
@@ -454,7 +477,8 @@ const VIDEOS=[
     "hours": 9.37,
     "min_view": 3.37,
     "retention": 31.2,
-    "views_day": 16.7
+    "views_day": 16.7,
+    "subs": 2
   },
   {
     "vid": "Nl83dA98kUo",
@@ -466,7 +490,8 @@ const VIDEOS=[
     "hours": 4.97,
     "min_view": 7.64,
     "retention": 27.9,
-    "views_day": 2.8
+    "views_day": 2.8,
+    "subs": 1
   }
 ].map(v=>({
   ...v, 
@@ -484,6 +509,7 @@ const avgRet=()=>VIDEOS.reduce((s,v)=>s+v.retention,0)/VIDEOS.length;
 const avgMinView=()=>VIDEOS.reduce((s,v)=>s+v.min_view,0)/VIDEOS.length;
 const sumViewsDay=()=>VIDEOS.reduce((s,v)=>s+v.views_day,0);
 const totalEarnings=()=>VIDEOS.reduce((s,v)=>s+v.earnings,0);
+const totalSubsGained=()=>VIDEOS.reduce((s,v)=>s+v.subs,0);
 function retBadge(r){
   if(r>=40)return`<span class="badge badge-high">${r}%</span>`;
   if(r>=25)return`<span class="badge badge-mid">${r}%</span>`;
@@ -498,11 +524,10 @@ function renderCards(){
   const cards=[
     {icon:'🎬',label:'Videos analizados',value:VIDEOS.length,cls:'accent',sub:`desde ${CONFIG.startDate}`},
     {icon:'⏱️',label:'Horas acumuladas',value:fmt(th),cls:'accent',sub:`de ${fmtI(CONFIG.goal)} necesarias`},
-    {icon:'🏁',label:'Horas restantes',value:fmt(rem),cls:'',sub:`~${hpd.toFixed(1)} hrs/día actual`},
+    {icon:'❤️',label:'Subs ganados',value:'+'+fmtI(totalSubsGained()),cls:'',sub:`por videos totales`},
     {icon:'💰',label:'Ingresos Est.',value:'$'+fmt(totalEarnings()),cls:'gold',sub:`simulado ($${SIMULATED_RPM} RPM)`},
     {icon:'👀',label:'Vistas totales',value:fmtI(totalViews()),cls:'',sub:'total del período'},
     {icon:'🔁',label:'Retención media',value:fmtP(avgRet()),cls:'gold',sub:'promedio entre videos'},
-    {icon:'📅',label:'Vistas/día (total)',value:fmtI(sumViewsDay()),cls:'',sub:'suma de todos los videos'},
   ];
   document.getElementById('cards-grid').innerHTML=cards.map(c=>`<div class="card"><div class="card-icon">${c.icon}</div><div class="card-label">${c.label}</div><div class="card-value ${c.cls}">${c.value}</div><div class="card-sub">${c.sub}</div></div>`).join('');
 }
@@ -538,6 +563,7 @@ function renderTotals(){
   const totals=[
     {label:'Duración total',val:fmt(VIDEOS.reduce((s,v)=>s+v.duration,0))+' min'},
     {label:'Vistas totales',val:fmtI(totalViews())},
+    {label:'Subs ganados',val:'+'+fmtI(totalSubsGained())},
     {label:'Ingresos Est.',val:'$'+fmt(totalEarnings())},
     {label:'Min. vistos totales',val:fmtI(totalMins())},
     {label:'Horas acumuladas',val:fmt(totalHours())},
@@ -550,10 +576,10 @@ function renderTotals(){
 function renderCharts(){
   const top10=[...VIDEOS].sort((a,b)=>b.hours-a.hours).slice(0,10);
   Chart.defaults.color='#cbd5e1';
-  const grid='rgba(148,163,184,.15)',tick='#94a3b8';
+  const grid='rgba(161,161,170,.15)',tick='#a1a1aa';
   new Chart(document.getElementById('chart-hours').getContext('2d'),{
     type:'bar',
-    data:{labels:top10.map(v=>v.title.length>30?v.title.slice(0,30)+'…':v.title),datasets:[{label:'Horas',data:top10.map(v=>v.hours),backgroundColor:top10.map((v,i)=>`rgba(59,130,246,${Math.max(0.2, 0.85-i*.05)})`),borderRadius:5,borderSkipped:false}]},
+    data:{labels:top10.map(v=>v.title.length>30?v.title.slice(0,30)+'…':v.title),datasets:[{label:'Horas',data:top10.map(v=>v.hours),backgroundColor:top10.map((v,i)=>`rgba(225,29,72,${Math.max(0.2, 0.85-i*.05)})`),borderRadius:5,borderSkipped:false}]},
     options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.raw.toFixed(2)} hrs`}}},scales:{x:{grid:{color:grid},ticks:{color:tick}},y:{grid:{display:false},ticks:{color:tick,font:{size:10}}}}}
   });
   const sorted=[...VIDEOS].sort((a,b)=>b.retention-a.retention);
@@ -578,6 +604,7 @@ function renderTable(){
   else{tbody.innerHTML=data.map(v=>`<tr>
     <td><div class="video-cell"><div class="thumb-wrap"><img src="https://img.youtube.com/vi/${v.vid}/mqdefault.jpg" alt="thumbnail" loading="lazy"><div class="thumb-overlay">▶</div></div><a href="https://www.youtube.com/watch?v=${v.vid}" target="_blank" class="video-title">${v.title}</a></div></td>
     <td class="num">${v.published}</td><td class="num">${v.duration} min</td><td class="num">${fmtI(v.views)}</td>
+    <td class="num" style="color:var(--green);font-weight:700">+${fmtI(v.subs)}</td>
     <td class="num" style="color:var(--yellow);font-weight:700">$${fmt(v.earnings)}</td>
     <td class="num" style="color:var(--accent3);font-size:0.75rem">$${v.earnings_per_view.toFixed(4)}</td>
     <td>${miniBar(v.minutes,maxM)}</td><td><span class="hrs-value">${v.hours.toFixed(2)}</span></td>
