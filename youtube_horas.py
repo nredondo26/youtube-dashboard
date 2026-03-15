@@ -196,7 +196,7 @@ def main():
     print("🖥️  Generando dashboard HTML...")
     html = generate_html(videos, MONETIZATION_GOAL)
 
-    html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dashboard.html")
+    html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html")
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html)
 
