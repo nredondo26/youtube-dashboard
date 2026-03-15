@@ -97,7 +97,7 @@ def get_video_details(youtube, video_ids: list, start_date_dt: datetime) -> dict
     for i in range(0, len(video_ids), 50):
         batch = video_ids[i : i + 50]
         res   = youtube.videos().list(
-            part="snippet,contentDetails",
+            part="snippet,contentDetails,statistics",
             id=",".join(batch),
         ).execute()
 
@@ -112,6 +112,8 @@ def get_video_details(youtube, video_ids: list, start_date_dt: datetime) -> dict
                     "title":     item["snippet"]["title"],
                     "published": published_str,
                     "duration":  round(seconds / 60, 2),
+                    "likes":     int(item["statistics"].get("likeCount", 0)),
+                    "comments":  int(item["statistics"].get("commentCount", 0))
                 }
     return info
 
@@ -138,6 +140,11 @@ def process_videos(rows: list, info: dict) -> list:
         published    = datetime.strptime(data["published"], "%Y-%m-%d").replace(tzinfo=timezone.utc)
         days_online  = max((hoy - published).days + 1, 1)
         views_per_day = views / days_online
+        
+        # Calcular Engagement (Likes + Comentarios / Vistas * 100)
+        likes = data["likes"]
+        comments = data["comments"]
+        engagement = ((likes + comments) / views) * 100 if views > 0 else 0
 
         result.append({
             "vid":       vid,
@@ -151,6 +158,9 @@ def process_videos(rows: list, info: dict) -> list:
             "retention": round(retention, 1),
             "views_day": round(views_per_day, 1),
             "subs":      subs_gained,
+            "likes":     likes,
+            "comments":  comments,
+            "engagement": round(engagement, 2),
             "thumb":     f"https://img.youtube.com/vi/{vid}/mqdefault.jpg",
         })
 
@@ -177,6 +187,9 @@ def generate_html(videos: list, goal: float, channel_info: dict) -> str:
             "retention": v["retention"],
             "views_day": v["views_day"],
             "subs":      v["subs"],
+            "likes":     v["likes"],
+            "comments":  v["comments"],
+            "engagement":v["engagement"],
         }
         for v in videos
     ], ensure_ascii=False, indent=2)
