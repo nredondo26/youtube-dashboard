@@ -118,7 +118,7 @@ tbody tr:hover td{background:var(--surface2)}
   <p class="hero-sub">Seguimiento de horas de reproducción hacia monetización</p>
   <div class="hero-meta">
     <span class="hero-meta-item">🗓️ Período: <strong>2026-03-01 → hoy</strong></span>
-    <span class="hero-meta-item">🕐 Generado: <strong>15/03/2026 00:34</strong></span>
+    <span class="hero-meta-item">🕐 Generado: <strong>15/03/2026 00:40</strong></span>
     <span class="hero-meta-item">🎯 Meta: <strong>4,000 hrs</strong></span>
   </div>
 </div>
@@ -194,6 +194,7 @@ tbody tr:hover td{background:var(--surface2)}
             <th data-col="duration">Duración<span class="sort-icon"></span></th>
             <th data-col="views">Vistas<span class="sort-icon"></span></th>
             <th data-col="earnings">Ingresos Est.<span class="sort-icon"></span></th>
+            <th data-col="earnings_per_view">Ingreso/Vista<span class="sort-icon"></span></th>
             <th data-col="minutes">Min. vistos<span class="sort-icon"></span></th>
             <th data-col="hours">Horas<span class="sort-icon"></span></th>
             <th data-col="min_view">Min/Vista<span class="sort-icon"></span></th>
@@ -208,11 +209,11 @@ tbody tr:hover td{background:var(--surface2)}
   </div>
 </div>
 <div class="footer container">
-  <p>YouTube Analytics Dashboard &nbsp;·&nbsp; 15/03/2026 00:34 &nbsp;·&nbsp; Canal de Terror</p>
+  <p>YouTube Analytics Dashboard &nbsp;·&nbsp; 15/03/2026 00:40 &nbsp;·&nbsp; Canal de Terror</p>
   <p style="margin-top:6px">Período desde 2026-03-01 &nbsp;·&nbsp; Meta: 4,000 hrs</p>
 </div>
 <script>
-const CONFIG={"startDate":"2026-03-01","generatedAt":"15/03/2026 00:34","goal":4000};
+const CONFIG={"startDate":"2026-03-01","generatedAt":"15/03/2026 00:40","goal":4000};
 const SIMULATED_RPM=1.50;
 const VIDEOS=[
   {
@@ -467,7 +468,11 @@ const VIDEOS=[
     "retention": 27.9,
     "views_day": 2.8
   }
-].map(v=>({...v, earnings: (v.views/1000)*SIMULATED_RPM}));
+].map(v=>({
+  ...v, 
+  earnings: (v.views/1000)*SIMULATED_RPM,
+  earnings_per_view: v.views > 0 ? ((v.views/1000)*SIMULATED_RPM) / v.views : 0
+}));
 let sortCol='hours',sortDir='desc',filter='all',search='';
 const fmt=n=>n.toLocaleString('es-ES',{minimumFractionDigits:0,maximumFractionDigits:2});
 const fmtI=n=>Math.round(n).toLocaleString('es-ES');
@@ -569,11 +574,12 @@ function getFiltered(){
 }
 function renderTable(){
   const data=getFiltered(),maxM=Math.max(...VIDEOS.map(v=>v.minutes)),tbody=document.getElementById('table-body');
-  if(data.length===0){tbody.innerHTML=`<tr><td colspan="10"><div class="empty-state"><div class="big">🔍</div>No se encontraron videos.</div></td></tr>`;}
+  if(data.length===0){tbody.innerHTML=`<tr><td colspan="11"><div class="empty-state"><div class="big">🔍</div>No se encontraron videos.</div></td></tr>`;}
   else{tbody.innerHTML=data.map(v=>`<tr>
     <td><div class="video-cell"><div class="thumb-wrap"><img src="https://img.youtube.com/vi/${v.vid}/mqdefault.jpg" alt="thumbnail" loading="lazy"><div class="thumb-overlay">▶</div></div><a href="https://www.youtube.com/watch?v=${v.vid}" target="_blank" class="video-title">${v.title}</a></div></td>
     <td class="num">${v.published}</td><td class="num">${v.duration} min</td><td class="num">${fmtI(v.views)}</td>
     <td class="num" style="color:var(--yellow);font-weight:700">$${fmt(v.earnings)}</td>
+    <td class="num" style="color:var(--accent3);font-size:0.75rem">$${v.earnings_per_view.toFixed(4)}</td>
     <td>${miniBar(v.minutes,maxM)}</td><td><span class="hrs-value">${v.hours.toFixed(2)}</span></td>
     <td class="num">${v.min_view}</td><td>${retBadge(v.retention)}</td><td class="num">${v.views_day}</td>
   </tr>`).join('');}
