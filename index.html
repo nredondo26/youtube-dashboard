@@ -121,7 +121,7 @@ tbody tr:hover td{background:var(--surface2)}
   <p class="hero-sub">2,160 Suscriptores &nbsp;·&nbsp; Seguimiento de monetización</p>
   <div class="hero-meta">
     <span class="hero-meta-item">🗓️ Período: <strong>2026-03-01 → hoy</strong></span>
-    <span class="hero-meta-item">🕐 Generado: <strong>15/03/2026 01:12</strong></span>
+    <span class="hero-meta-item">🕐 Generado: <strong>15/03/2026 01:26</strong></span>
     <span class="hero-meta-item">🎯 Meta: <strong>4,000 hrs</strong></span>
   </div>
 </div>
@@ -165,10 +165,11 @@ tbody tr:hover td{background:var(--surface2)}
     </div>
   </div>
   <div class="section animate delay-2">
-    <div class="section-title">📊 Gráficos</div>
+    <div class="section-title">📊 Gráficos de Rendimiento y Crecimiento</div>
     <div class="charts-grid">
       <div class="chart-panel"><h3>🏆 Horas por video (Top 10)</h3><canvas id="chart-hours" height="260"></canvas></div>
       <div class="chart-panel"><h3>👁️ Retención por video</h3><canvas id="chart-retention" height="260"></canvas></div>
+      <div class="chart-panel"><h3>📈 Top 7 Campeones de Suscriptores</h3><canvas id="chart-subs" height="260"></canvas></div>
     </div>
   </div>
   <div class="section animate delay-3">
@@ -184,6 +185,7 @@ tbody tr:hover td{background:var(--surface2)}
       </div>
       <button class="filter-btn" id="btn-all"  onclick="setFilter('all')">Todos</button>
       <button class="filter-btn" id="btn-high" onclick="setFilter('high')">🔴 Retención ≥40%</button>
+      <button class="filter-btn" id="btn-eng"  onclick="setFilter('eng')">🔥 Alto Engagement (>5%)</button>
       <button class="filter-btn" id="btn-mid"  onclick="setFilter('mid')">🟠 Media 25–40%</button>
       <button class="filter-btn" id="btn-low"  onclick="setFilter('low')">🔵 Baja &lt;25%</button>
       <button class="filter-btn" onclick="clearSearch()">✕ Limpiar</button>
@@ -197,13 +199,15 @@ tbody tr:hover td{background:var(--surface2)}
             <th data-col="duration">Duración<span class="sort-icon"></span></th>
             <th data-col="views">Vistas<span class="sort-icon"></span></th>
             <th data-col="subs">Subs<span class="sort-icon"></span></th>
+            <th data-col="engagement">Engag %<span class="sort-icon"></span></th>
             <th data-col="earnings">Ingresos Est.<span class="sort-icon"></span></th>
             <th data-col="earnings_per_view">Ingreso/Vista<span class="sort-icon"></span></th>
             <th data-col="minutes">Min. vistos<span class="sort-icon"></span></th>
             <th data-col="hours">Horas<span class="sort-icon"></span></th>
             <th data-col="min_view">Min/Vista<span class="sort-icon"></span></th>
-            <th data-col="retention">Retención %<span class="sort-icon"></span></th>
+            <th data-col="retention">Retención<span class="sort-icon"></span></th>
             <th data-col="views_day">Vistas/día<span class="sort-icon"></span></th>
+            <th style="cursor:default">Acción</th>
           </tr></thead>
           <tbody id="table-body"></tbody>
         </table>
@@ -213,11 +217,11 @@ tbody tr:hover td{background:var(--surface2)}
   </div>
 </div>
 <div class="footer container">
-  <p>YouTube Analytics Dashboard &nbsp;·&nbsp; 15/03/2026 01:12 &nbsp;·&nbsp; Un Relato Oscuro</p>
+  <p>YouTube Analytics Dashboard &nbsp;·&nbsp; 15/03/2026 01:26 &nbsp;·&nbsp; Un Relato Oscuro</p>
   <p style="margin-top:6px">Período desde 2026-03-01 &nbsp;·&nbsp; Meta: 4,000 hrs</p>
 </div>
 <script>
-const CONFIG={"startDate":"2026-03-01","generatedAt":"15/03/2026 01:12","goal":4000};
+const CONFIG={"startDate":"2026-03-01","generatedAt":"15/03/2026 01:26","goal":4000};
 const SIMULATED_RPM=1.50;
 const VIDEOS=[
   {
@@ -231,7 +235,10 @@ const VIDEOS=[
     "min_view": 4.46,
     "retention": 46.8,
     "views_day": 465.0,
-    "subs": 22
+    "subs": 22,
+    "likes": 75,
+    "comments": 11,
+    "engagement": 2.05
   },
   {
     "vid": "Bg-Ub3aqp_Q",
@@ -244,7 +251,10 @@ const VIDEOS=[
     "min_view": 11.11,
     "retention": 44.1,
     "views_day": 93.4,
-    "subs": 14
+    "subs": 14,
+    "likes": 24,
+    "comments": 0,
+    "engagement": 1.84
   },
   {
     "vid": "9nmu_gjXQRo",
@@ -257,7 +267,10 @@ const VIDEOS=[
     "min_view": 10.48,
     "retention": 34.7,
     "views_day": 74.1,
-    "subs": 4
+    "subs": 4,
+    "likes": 13,
+    "comments": 0,
+    "engagement": 1.25
   },
   {
     "vid": "CJZq4EZnpHs",
@@ -270,7 +283,10 @@ const VIDEOS=[
     "min_view": 4.88,
     "retention": 32.5,
     "views_day": 191.8,
-    "subs": 11
+    "subs": 11,
+    "likes": 26,
+    "comments": 0,
+    "engagement": 1.69
   },
   {
     "vid": "psxVc6wlhbs",
@@ -283,7 +299,10 @@ const VIDEOS=[
     "min_view": 7.41,
     "retention": 44.0,
     "views_day": 64.8,
-    "subs": 11
+    "subs": 11,
+    "likes": 19,
+    "comments": 0,
+    "engagement": 1.95
   },
   {
     "vid": "iOi7aHbkfVI",
@@ -296,7 +315,10 @@ const VIDEOS=[
     "min_view": 4.69,
     "retention": 31.4,
     "views_day": 218.3,
-    "subs": 11
+    "subs": 11,
+    "likes": 17,
+    "comments": 0,
+    "engagement": 1.11
   },
   {
     "vid": "gaN54dLaDAs",
@@ -309,7 +331,10 @@ const VIDEOS=[
     "min_view": 32.74,
     "retention": 28.6,
     "views_day": 10.5,
-    "subs": 3
+    "subs": 3,
+    "likes": 5,
+    "comments": 0,
+    "engagement": 4.31
   },
   {
     "vid": "lt_NnyqTw7w",
@@ -322,7 +347,10 @@ const VIDEOS=[
     "min_view": 6.74,
     "retention": 41.2,
     "views_day": 112.6,
-    "subs": 5
+    "subs": 5,
+    "likes": 24,
+    "comments": 0,
+    "engagement": 4.26
   },
   {
     "vid": "9wBgLLuw9Xo",
@@ -335,7 +363,10 @@ const VIDEOS=[
     "min_view": 13.14,
     "retention": 43.5,
     "views_day": 23.7,
-    "subs": 6
+    "subs": 6,
+    "likes": 14,
+    "comments": 0,
+    "engagement": 4.93
   },
   {
     "vid": "AG_IikU7I3M",
@@ -348,7 +379,10 @@ const VIDEOS=[
     "min_view": 4.26,
     "retention": 37.0,
     "views_day": 64.4,
-    "subs": 2
+    "subs": 2,
+    "likes": 7,
+    "comments": 2,
+    "engagement": 1.4
   },
   {
     "vid": "l8xhb-tUjGw",
@@ -361,7 +395,10 @@ const VIDEOS=[
     "min_view": 3.17,
     "retention": 29.2,
     "views_day": 65.7,
-    "subs": 3
+    "subs": 3,
+    "likes": 8,
+    "comments": 2,
+    "engagement": 1.27
   },
   {
     "vid": "agVXtSiRlac",
@@ -374,7 +411,10 @@ const VIDEOS=[
     "min_view": 15.15,
     "retention": 26.8,
     "views_day": 20.1,
-    "subs": 0
+    "subs": 0,
+    "likes": 2,
+    "comments": 0,
+    "engagement": 1.24
   },
   {
     "vid": "Yuv1fT4t1Ps",
@@ -387,7 +427,10 @@ const VIDEOS=[
     "min_view": 4.94,
     "retention": 41.1,
     "views_day": 59.0,
-    "subs": 2
+    "subs": 2,
+    "likes": 12,
+    "comments": 0,
+    "engagement": 4.07
   },
   {
     "vid": "5SScSJtRXFk",
@@ -400,7 +443,10 @@ const VIDEOS=[
     "min_view": 9.82,
     "retention": 46.9,
     "views_day": 9.1,
-    "subs": 1
+    "subs": 1,
+    "likes": 5,
+    "comments": 0,
+    "engagement": 3.65
   },
   {
     "vid": "80QvmMU5rbE",
@@ -413,7 +459,10 @@ const VIDEOS=[
     "min_view": 8.98,
     "retention": 41.3,
     "views_day": 21.8,
-    "subs": 0
+    "subs": 0,
+    "likes": 6,
+    "comments": 0,
+    "engagement": 4.58
   },
   {
     "vid": "C9sRAMfKz00",
@@ -426,7 +475,10 @@ const VIDEOS=[
     "min_view": 2.42,
     "retention": 20.3,
     "views_day": 36.2,
-    "subs": 0
+    "subs": 0,
+    "likes": 2,
+    "comments": 0,
+    "engagement": 0.46
   },
   {
     "vid": "6TBDudbs1Us",
@@ -439,7 +491,10 @@ const VIDEOS=[
     "min_view": 6.91,
     "retention": 25.8,
     "views_day": 12.6,
-    "subs": 0
+    "subs": 0,
+    "likes": 1,
+    "comments": 0,
+    "engagement": 0.79
   },
   {
     "vid": "4LU5X2ME4js",
@@ -452,7 +507,10 @@ const VIDEOS=[
     "min_view": 4.02,
     "retention": 36.1,
     "views_day": 14.4,
-    "subs": 1
+    "subs": 1,
+    "likes": 5,
+    "comments": 0,
+    "engagement": 2.48
   },
   {
     "vid": "5ED5DfrGkkA",
@@ -465,7 +523,10 @@ const VIDEOS=[
     "min_view": 8.23,
     "retention": 14.9,
     "views_day": 12.9,
-    "subs": 1
+    "subs": 1,
+    "likes": 5,
+    "comments": 0,
+    "engagement": 5.56
   },
   {
     "vid": "nZRWYLOf7G8",
@@ -478,7 +539,10 @@ const VIDEOS=[
     "min_view": 3.37,
     "retention": 31.2,
     "views_day": 16.7,
-    "subs": 2
+    "subs": 2,
+    "likes": 3,
+    "comments": 0,
+    "engagement": 1.8
   },
   {
     "vid": "Nl83dA98kUo",
@@ -491,7 +555,10 @@ const VIDEOS=[
     "min_view": 7.64,
     "retention": 27.9,
     "views_day": 2.8,
-    "subs": 1
+    "subs": 1,
+    "likes": 2,
+    "comments": 0,
+    "engagement": 5.13
   }
 ].map(v=>({
   ...v, 
@@ -510,10 +577,16 @@ const avgMinView=()=>VIDEOS.reduce((s,v)=>s+v.min_view,0)/VIDEOS.length;
 const sumViewsDay=()=>VIDEOS.reduce((s,v)=>s+v.views_day,0);
 const totalEarnings=()=>VIDEOS.reduce((s,v)=>s+v.earnings,0);
 const totalSubsGained=()=>VIDEOS.reduce((s,v)=>s+v.subs,0);
+const avgEng=()=>VIDEOS.reduce((s,v)=>s+v.engagement,0)/VIDEOS.length;
 function retBadge(r){
   if(r>=40)return`<span class="badge badge-high">${r}%</span>`;
   if(r>=25)return`<span class="badge badge-mid">${r}%</span>`;
   return`<span class="badge badge-low">${r}%</span>`;
+}
+function engBadge(r){
+  if(r>=5)return`<span class="badge badge-high">🔥 ${r.toFixed(1)}%</span>`;
+  if(r>=2)return`<span class="badge badge-mid">${r.toFixed(1)}%</span>`;
+  return`<span class="badge badge-low">${r.toFixed(1)}%</span>`;
 }
 function miniBar(val,max){
   const pct=Math.min((val/max)*100,100);
@@ -564,6 +637,7 @@ function renderTotals(){
     {label:'Duración total',val:fmt(VIDEOS.reduce((s,v)=>s+v.duration,0))+' min'},
     {label:'Vistas totales',val:fmtI(totalViews())},
     {label:'Subs ganados',val:'+'+fmtI(totalSubsGained())},
+    {label:'Engagement (prom.)',val:fmtP(avgEng())},
     {label:'Ingresos Est.',val:'$'+fmt(totalEarnings())},
     {label:'Min. vistos totales',val:fmtI(totalMins())},
     {label:'Horas acumuladas',val:fmt(totalHours())},
@@ -588,11 +662,19 @@ function renderCharts(){
     data:{labels:sorted.map(v=>v.title.length>28?v.title.slice(0,28)+'…':v.title),datasets:[{label:'%',data:sorted.map(v=>v.retention),backgroundColor:sorted.map(v=>v.retention>=40?'rgba(16,185,129,.8)':v.retention>=25?'rgba(251,191,36,.8)':'rgba(239,68,68,.8)'),borderRadius:5,borderSkipped:false}]},
     options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.raw}% retención`}}},scales:{x:{grid:{color:grid},ticks:{color:tick},min:0,max:70},y:{grid:{display:false},ticks:{color:tick,font:{size:10}}}}}
   });
+  
+  const topSubs=[...VIDEOS].filter(v=>v.subs>0).sort((a,b)=>b.subs-a.subs).slice(0,7);
+  new Chart(document.getElementById('chart-subs').getContext('2d'),{
+    type:'bar',
+    data:{labels:topSubs.map(v=>v.title.length>45?v.title.slice(0,45)+'…':v.title),datasets:[{label:'Subs',data:topSubs.map(v=>v.subs),backgroundColor:topSubs.map((v,i)=>`rgba(16,185,129,${Math.max(0.3, 0.9-i*.08)})`),borderRadius:5,borderSkipped:false}]},
+    options:{responsive:true,indexAxis:'x',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` +${ctx.raw} subs`}}},scales:{x:{grid:{display:false},ticks:{color:tick,font:{size:10}}},y:{grid:{color:grid},ticks:{color:tick}}}}
+  });
 }
 function getFiltered(){
   let data=[...VIDEOS];
   if(search){const q=search.toLowerCase();data=data.filter(v=>v.title.toLowerCase().includes(q));}
   if(filter==='high')data=data.filter(v=>v.retention>=40);
+  if(filter==='eng')data=data.filter(v=>v.engagement>=5);
   if(filter==='mid')data=data.filter(v=>v.retention>=25&&v.retention<40);
   if(filter==='low')data=data.filter(v=>v.retention<25);
   data.sort((a,b)=>{const av=a[sortCol],bv=b[sortCol];if(typeof av==='string')return sortDir==='asc'?av.localeCompare(bv):bv.localeCompare(av);return sortDir==='asc'?av-bv:bv-av;});
@@ -600,22 +682,24 @@ function getFiltered(){
 }
 function renderTable(){
   const data=getFiltered(),maxM=Math.max(...VIDEOS.map(v=>v.minutes)),tbody=document.getElementById('table-body');
-  if(data.length===0){tbody.innerHTML=`<tr><td colspan="11"><div class="empty-state"><div class="big">🔍</div>No se encontraron videos.</div></td></tr>`;}
+  if(data.length===0){tbody.innerHTML=`<tr><td colspan="12"><div class="empty-state"><div class="big">🔍</div>No se encontraron videos.</div></td></tr>`;}
   else{tbody.innerHTML=data.map(v=>`<tr>
     <td><div class="video-cell"><div class="thumb-wrap"><img src="https://img.youtube.com/vi/${v.vid}/mqdefault.jpg" alt="thumbnail" loading="lazy"><div class="thumb-overlay">▶</div></div><a href="https://www.youtube.com/watch?v=${v.vid}" target="_blank" class="video-title">${v.title}</a></div></td>
     <td class="num">${v.published}</td><td class="num">${v.duration} min</td><td class="num">${fmtI(v.views)}</td>
     <td class="num" style="color:var(--green);font-weight:700">+${fmtI(v.subs)}</td>
+    <td>${engBadge(v.engagement)}</td>
     <td class="num" style="color:var(--yellow);font-weight:700">$${fmt(v.earnings)}</td>
     <td class="num" style="color:var(--accent3);font-size:0.75rem">$${v.earnings_per_view.toFixed(4)}</td>
     <td>${miniBar(v.minutes,maxM)}</td><td><span class="hrs-value">${v.hours.toFixed(2)}</span></td>
     <td class="num">${v.min_view}</td><td>${retBadge(v.retention)}</td><td class="num">${v.views_day}</td>
+    <td><a href="https://studio.youtube.com/video/${v.vid}/edit" target="_blank" style="display:inline-flex;padding:6px;background:var(--surface3);border-radius:6px;color:var(--text);text-decoration:none" title="Editar en YT Studio">✏️</a></td>
   </tr>`).join('');}
   document.getElementById('row-count').textContent=`Mostrando ${data.length} de ${VIDEOS.length} videos`;
   document.querySelectorAll('th[data-col]').forEach(th=>{th.classList.remove('sorted-asc','sorted-desc');if(th.dataset.col===sortCol)th.classList.add(sortDir==='asc'?'sorted-asc':'sorted-desc');});
 }
 document.querySelectorAll('th[data-col]').forEach(th=>{th.addEventListener('click',()=>{const col=th.dataset.col;if(sortCol===col){sortDir=sortDir==='asc'?'desc':'asc';}else{sortCol=col;sortDir='desc';}renderTable();});});
 document.getElementById('search-input').addEventListener('input',e=>{search=e.target.value.trim();renderTable();});
-function setFilter(f){filter=f;['all','high','mid','low'].forEach(id=>document.getElementById('btn-'+id).classList.toggle('active',id===f));renderTable();}
+function setFilter(f){filter=f;['all','high','eng','mid','low'].forEach(id=>document.getElementById('btn-'+id).classList.toggle('active',id===f));renderTable();}
 function clearSearch(){search='';filter='all';document.getElementById('search-input').value='';setFilter('all');}
 renderCards();renderProgress();renderTotals();renderTable();renderCharts();setFilter('all');
 </script>
