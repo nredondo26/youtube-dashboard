@@ -70,6 +70,26 @@ def get_analytics(analytics, start_date: str, end_date: str) -> list:
 
 
 # ─────────────────────────────────────────────
+# OBTENER INFORMACIÓN DEL CANAL
+# ─────────────────────────────────────────────
+def get_channel_info(youtube) -> dict:
+    res = youtube.channels().list(
+        part="snippet,statistics",
+        id=CHANNEL_ID
+    ).execute()
+
+    if not res.get("items"):
+        return {"title": "Canal de YouTube", "thumb": "", "subs": 0}
+
+    item = res["items"][0]
+    return {
+        "title": item["snippet"]["title"],
+        "thumb": item["snippet"]["thumbnails"].get("high", item["snippet"]["thumbnails"].get("default", {}))["url"],
+        "subs":  int(item["statistics"].get("subscriberCount", 0))
+    }
+
+
+# ─────────────────────────────────────────────
 # OBTENER DETALLES DE VIDEOS
 # ─────────────────────────────────────────────
 def get_video_details(youtube, video_ids: list, start_date_dt: datetime) -> dict:
@@ -139,7 +159,7 @@ def process_videos(rows: list, info: dict) -> list:
 # ─────────────────────────────────────────────
 # GENERAR HTML  (versión premium con Chart.js)
 # ─────────────────────────────────────────────
-def generate_html(videos: list, goal: float) -> str:
+def generate_html(videos: list, goal: float, channel_info: dict) -> str:
     generated_at = datetime.now().strftime("%d/%m/%Y %H:%M")
 
     # Build JSON for the JS data block
@@ -169,6 +189,9 @@ def generate_html(videos: list, goal: float) -> str:
     html = html.replace("[[GOAL]]", str(goal))
     html = html.replace("[[GOAL_INT]]", f"{int(goal):,}")
     html = html.replace("[[JS_VIDEOS]]", js_videos)
+    html = html.replace("[[CHANNEL_TITLE]]", channel_info["title"])
+    html = html.replace("[[CHANNEL_THUMB]]", channel_info["thumb"])
+    html = html.replace("[[CHANNEL_SUBS]]", f"{channel_info['subs']:,}")
 
     return html
 
@@ -190,11 +213,14 @@ def main():
     print(f"🎬 Obteniendo detalles de {len(video_ids)} videos...")
     info = get_video_details(youtube, video_ids, start_date_dt)
 
+    print("🎬 Obteniendo información del canal...")
+    channel_info = get_channel_info(youtube)
+
     print("⚙️  Procesando métricas...")
     videos = process_videos(rows, info)
 
     print("🖥️  Generando dashboard HTML...")
-    html = generate_html(videos, MONETIZATION_GOAL)
+    html = generate_html(videos, MONETIZATION_GOAL, channel_info)
 
     html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html")
     with open(html_path, "w", encoding="utf-8") as f:

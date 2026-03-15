@@ -9,20 +9,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#0f172a;--bg2:#1e293b;--surface:#1e293b;--surface2:#334155;--surface3:#475569;
-  --border:#334155;--border2:#475569;--accent:#3b82f6;--accent2:#60a5fa;--accent3:#93c5fd;
-  --text:#f8fafc;--text2:#cbd5e1;--muted:#94a3b8;--green:#10b981;--yellow:#fbbf24;
-  --radius:14px;--radius-sm:8px;--glow:0 0 20px rgba(59,130,246,.35);
+  --bg:#09090b;--bg2:#18181b;--surface:#18181b;--surface2:#27272a;--surface3:#3f3f46;
+  --border:#27272a;--border2:#3f3f46;--accent:#e11d48;--accent2:#f43f5e;--accent3:#fb7185;
+  --text:#fafafa;--text2:#a1a1aa;--muted:#71717a;--green:#10b981;--yellow:#fbbf24;
+  --radius:14px;--radius-sm:8px;--glow:0 0 20px rgba(225,29,72,.35);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);background-image:radial-gradient(ellipse 80% 50% at 50% -10%,#1e3a8a 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,#0f172a 0%,transparent 50%);font-family:'Inter',system-ui,sans-serif;color:var(--text);min-height:100vh;padding:0 0 60px;overflow-x:hidden}
+body{background:var(--bg);background-image:radial-gradient(ellipse 80% 50% at 50% -10%,#4c0519 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 80% 80%,#09090b 0%,transparent 50%);font-family:'Inter',system-ui,sans-serif;color:var(--text);min-height:100vh;padding:0 0 60px;overflow-x:hidden}
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}::-webkit-scrollbar-thumb:hover{background:var(--accent)}
 .hero{position:relative;text-align:center;padding:54px 24px 48px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#0f172a 0%,transparent 100%);overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 100% 100% at 50% 0%,rgba(59,130,246,.12) 0%,transparent 70%);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(59,130,246,.15);border:1px solid var(--border2);border-radius:99px;padding:6px 16px;font-size:.75rem;color:var(--accent2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;animation:pulse-border 3s ease-in-out infinite}
-@keyframes pulse-border{0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,0);border-color:#334155}50%{box-shadow:0 0 12px 2px rgba(59,130,246,.3);border-color:#3b82f6}}
-.hero h1{font-family:'Inter',sans-serif;font-weight:800;font-size:clamp(2.2rem,5vw,3.6rem);letter-spacing:.02em;background:linear-gradient(135deg,#60a5fa 0%,#3b82f6 40%,#93c5fd 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 18px rgba(59,130,246,.5));line-height:1.1}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 100% 100% at 50% 0%,rgba(225,29,72,.12) 0%,transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(225,29,72,.15);border:1px solid var(--border2);border-radius:99px;padding:6px 16px;font-size:.75rem;color:var(--accent2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:20px;animation:pulse-border 3s ease-in-out infinite}
+@keyframes pulse-border{0%,100%{box-shadow:0 0 0 0 rgba(225,29,72,0);border-color:#27272a}50%{box-shadow:0 0 12px 2px rgba(225,29,72,.3);border-color:#e11d48}}
+.hero h1{font-family:'Creepster',cursive;font-weight:400;font-size:clamp(2.8rem,6vw,4.5rem);letter-spacing:.05em;background:linear-gradient(135deg,#fb7185 0%,#e11d48 40%,#9f1239 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 18px rgba(225,29,72,.5));line-height:1.2}
+.hero-thumb-wrap { width: 96px; height: 96px; margin: 0 auto 16px; border-radius: 50%; padding: 4px; background: linear-gradient(135deg, #f43f5e, #9f1239); box-shadow: 0 0 25px rgba(225,29,72,.4); position: relative; z-index: 10; }
+.hero-thumb { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: var(--bg2); }
 .hero-sub{color:var(--muted);font-size:.88rem;margin-top:10px;letter-spacing:.02em}
 .hero-meta{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:22px;flex-wrap:wrap}
 .hero-meta-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted)}
@@ -113,9 +115,10 @@ tbody tr:hover td{background:var(--surface2)}
 </head>
 <body>
 <div class="hero">
-  <div class="hero-badge"><span class="dot"></span> Actualizado · Canal de Terror</div>
-  <h1>📊 YouTube Analytics Dashboard</h1>
-  <p class="hero-sub">Seguimiento de horas de reproducción hacia monetización</p>
+  <div class="hero-badge"><span class="dot"></span> Actualizado · YouTube Analytics</div>
+  <div class="hero-thumb-wrap"><img src="[[CHANNEL_THUMB]]" alt="Logo de [[CHANNEL_TITLE]]" class="hero-thumb"></div>
+  <h1>[[CHANNEL_TITLE]]</h1>
+  <p class="hero-sub">[[CHANNEL_SUBS]] Suscriptores &nbsp;·&nbsp; Seguimiento de monetización</p>
   <div class="hero-meta">
     <span class="hero-meta-item">🗓️ Período: <strong>[[START_DATE]] → hoy</strong></span>
     <span class="hero-meta-item">🕐 Generado: <strong>[[GENERATED_AT]]</strong></span>
@@ -209,7 +212,7 @@ tbody tr:hover td{background:var(--surface2)}
   </div>
 </div>
 <div class="footer container">
-  <p>YouTube Analytics Dashboard &nbsp;·&nbsp; [[GENERATED_AT]] &nbsp;·&nbsp; Canal de Terror</p>
+  <p>YouTube Analytics Dashboard &nbsp;·&nbsp; [[GENERATED_AT]] &nbsp;·&nbsp; [[CHANNEL_TITLE]]</p>
   <p style="margin-top:6px">Período desde [[START_DATE]] &nbsp;·&nbsp; Meta: [[GOAL_INT]] hrs</p>
 </div>
 <script>
