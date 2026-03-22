@@ -286,6 +286,7 @@ def export_summary(videos: List[Dict[str, Any]], goal: float, channel_info: dict
     pct_4k = round((total_hours / goal_4k) * 100, 1) if goal_4k > 0 else 0
     
     comp = daily_data.get("comparison", {})
+    daily_history = daily_data.get("history", [])[-7:]  # Últimos 7 días
     
     summary = {
         "title": channel_info["title"],
@@ -301,6 +302,10 @@ def export_summary(videos: List[Dict[str, Any]], goal: float, channel_info: dict
         "subs_diff": comp.get("today_subs", 0) - comp.get("yesterday_subs", 0),
         "trend": comp.get("trend", "flat"),
         "diff_pct": comp.get("diff_pct", 0),
+        "history": [
+            {"date": row[0], "hours": round(row[1] / 60, 1)} 
+            for row in daily_history
+        ],
         "last_update": datetime.now().isoformat()
     }
     
@@ -378,7 +383,8 @@ def main():
 
     daily_metrics = {
         "avg_daily_hours": round(avg_daily_min / 60, 2),
-        "comparison": comp_data
+        "comparison": comp_data,
+        "history": daily_rows
     }
 
     print("[Generando dashboard HTML]...")

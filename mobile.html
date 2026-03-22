@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg: #0f172a;
@@ -85,8 +86,8 @@
         /* Glass Card Base */
         .card {
             background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border);
             border-radius: var(--card-radius);
             padding: 20px;
@@ -112,7 +113,6 @@
             justify-content: center;
         }
 
-        /* Outer Circle (4k) */
         .circle-outer {
             position: absolute;
             width: 210px;
@@ -125,7 +125,6 @@
             filter: drop-shadow(0 0 5px var(--accent-4k-glow));
         }
 
-        /* Inner Circle (3k) */
         .circle-inner {
             position: absolute;
             width: 155px;
@@ -138,57 +137,35 @@
             filter: drop-shadow(0 0 5px var(--accent-3k-glow));
         }
 
-        .progress-info {
-            text-align: center;
-            z-index: 5;
-        }
+        .progress-info { text-align: center; z-index: 5; }
+        .total-val { font-size: 2.6rem; font-weight: 800; line-height: 1; }
+        .total-label { font-size: 0.8rem; color: var(--text-dim); font-weight: 600; }
 
-        .total-val {
-            font-size: 2.6rem;
-            font-weight: 800;
-            line-height: 1;
-        }
-
-        .total-label {
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            font-weight: 600;
-        }
-
-        .milestones {
-            display: flex;
-            width: 100%;
-            justify-content: space-around;
-            gap: 10px;
-        }
-
-        .milestone-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .milestone-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-bottom: 2px;
-        }
-
+        .milestones { display: flex; width: 100%; justify-content: space-around; gap: 10px; }
+        .milestone-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .milestone-dot { width: 10px; height: 10px; border-radius: 50%; margin-bottom: 2px; }
         .color-3k { background-color: var(--accent-3k); box-shadow: 0 0 10px var(--accent-3k-glow); }
         .color-4k { background-color: var(--accent-4k); box-shadow: 0 0 10px var(--accent-4k-glow); }
+        .milestone-pct { font-size: 1.1rem; font-weight: 700; }
+        .milestone-label { font-size: 0.65rem; color: var(--text-dim); text-transform: uppercase; font-weight: 600; }
 
-        .milestone-pct {
-            font-size: 1.1rem;
-            font-weight: 700;
+        /* Chart Section */
+        .chart-container {
+            padding: 24px;
+            height: 280px;
         }
-
-        .milestone-label {
-            font-size: 0.65rem;
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .chart-title {
+            font-size: 0.9rem;
+            font-weight: 700;
             color: var(--text-dim);
             text-transform: uppercase;
-            font-weight: 600;
+            letter-spacing: 1px;
         }
 
         /* Comparison Section */
@@ -215,65 +192,17 @@
             padding: 18px 24px;
         }
 
-        .comp-left {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .comp-main-val {
-            font-size: 1.6rem;
-            font-weight: 800;
-        }
-
-        .comp-label {
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            font-weight: 600;
-        }
-
-        .comp-right {
-            text-align: right;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-        }
-
-        .comp-diff {
-            font-size: 0.85rem;
-            font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
+        .comp-left { display: flex; flex-direction: column; }
+        .comp-main-val { font-size: 1.6rem; font-weight: 800; }
+        .comp-label { font-size: 0.75rem; color: var(--text-dim); font-weight: 600; }
+        .comp-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; }
+        .comp-diff { font-size: 0.85rem; font-weight: 700; padding: 4px 10px; border-radius: 10px; display: flex; align-items: center; gap: 4px; }
         .diff-up { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
         .diff-down { background: rgba(248, 113, 113, 0.15); color: #f87171; }
         .diff-flat { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
+        .comp-prev { font-size: 0.7rem; color: var(--text-dim); margin-top: 4px; }
 
-        .comp-prev {
-            font-size: 0.7rem;
-            color: var(--text-dim);
-            margin-top: 4px;
-        }
-
-        /* Pulse Animation for active metrics */
-        .pulse {
-            animation: pulse-ring 2s infinite;
-        }
-        @keyframes pulse-ring {
-            0% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.8; }
-        }
-
-        .update-footer {
-            text-align: center;
-            font-size: 0.65rem;
-            color: var(--text-dim);
-            margin: 10px 0 30px;
-        }
+        .update-footer { text-align: center; font-size: 0.65rem; color: var(--text-dim); margin: 10px 0 30px; }
 
         @property --p3k { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
         @property --p4k { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
@@ -318,9 +247,17 @@
             </div>
         </section>
 
+        <!-- Chart Section -->
+        <h2 class="section-title">Últimos 7 días</h2>
+        <section class="card chart-container">
+            <div class="chart-header">
+                <span class="chart-title">Horas de Visualización</span>
+            </div>
+            <canvas id="watchChart"></canvas>
+        </section>
+
         <h2 class="section-title">Hoy vs Ayer</h2>
         <div class="comparison-grid">
-            <!-- Horas -->
             <div class="card comp-card">
                 <div class="comp-left">
                     <span class="comp-label">Horas Visionadas</span>
@@ -331,7 +268,6 @@
                     <span class="comp-prev">Ayer: <span id="yest-hours">--h</span></span>
                 </div>
             </div>
-            <!-- Suscriptores -->
             <div class="card comp-card">
                 <div class="comp-left">
                     <span class="comp-label">Nuevos Subs</span>
@@ -348,6 +284,8 @@
     </div>
 
     <script>
+        let myChart = null;
+
         async function loadData() {
             try {
                 const response = await fetch('summary.json');
@@ -358,42 +296,104 @@
                 document.getElementById('subs').textContent = `${data.subs.toLocaleString()} Suscriptores`;
                 document.getElementById('total-hours').textContent = Math.round(data.total_hours);
 
-                // Milestones
+                // Progress Rings
                 document.getElementById('pct-3k').textContent = `${data.goal_3k_pct}%`;
                 document.getElementById('pct-4k').textContent = `${data.goal_4k_pct}%`;
-                
-                const c3k = document.getElementById('circle-3k');
-                const c4k = document.getElementById('circle-4k');
-                c3k.style.setProperty('--p3k', `${data.goal_3k_pct}%`);
-                c4k.style.setProperty('--p4k', `${data.goal_4k_pct}%`);
+                document.getElementById('circle-3k').style.setProperty('--p3k', `${data.goal_3k_pct}%`);
+                document.getElementById('circle-4k').style.setProperty('--p4k', `${data.goal_4k_pct}%`);
 
-                // Hours Comparison
+                // Comparisons
                 document.getElementById('today-hours').textContent = `${data.today_hours}h`;
                 document.getElementById('yest-hours').textContent = `${data.yesterday_hours}h`;
-                
                 const trendHours = document.getElementById('trend-hours');
                 trendHours.textContent = (data.diff_pct > 0 ? '+' : '') + data.diff_pct + '%';
                 trendHours.className = `comp-diff diff-${data.trend}`;
 
-                // Subs Comparison
                 document.getElementById('today-subs').textContent = `${data.today_subs}`;
                 document.getElementById('yest-subs').textContent = `${data.yesterday_subs}`;
-                
                 const trendSubs = document.getElementById('trend-subs');
                 const subsDiff = data.subs_diff;
                 trendSubs.textContent = (subsDiff > 0 ? '+' : '') + subsDiff;
                 trendSubs.className = `comp-diff diff-${subsDiff > 0 ? 'up' : (subsDiff < 0 ? 'down' : 'flat')}`;
 
-                const date = new Date(data.last_update);
-                document.getElementById('last-update').textContent = `Sincronizado: ${date.toLocaleDateString()} a las ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                document.getElementById('last-update').textContent = `Sincronizado: ${new Date(data.last_update).toLocaleString()}`;
+
+                // Chart Rendering
+                renderChart(data.history);
 
             } catch (error) {
                 console.error('Error:', error);
             }
         }
 
+        function renderChart(history) {
+            const ctx = document.getElementById('watchChart').getContext('2d');
+            
+            // Create Gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+            gradient.addColorStop(0, '#8b5cf6'); // Violeta
+            gradient.addColorStop(1, '#38bdf8'); // Azul
+
+            const labels = history.map(h => {
+                const d = new Date(h.date);
+                return d.toLocaleDateString('es-ES', { weekday: 'short' }).toUpperCase().replace('.', '');
+            });
+            const values = history.map(h => h.hours);
+
+            if (myChart) {
+                myChart.destroy();
+            }
+
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Horas',
+                        data: values,
+                        backgroundColor: gradient,
+                        borderRadius: 12,
+                        hoverBackgroundColor: '#8b5cf6',
+                        maxBarThickness: 28,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleFont: { size: 12, family: 'Outfit', weight: 'bold' },
+                            bodyFont: { size: 14, family: 'Outfit' },
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: (context) => `${context.parsed.y} Horas`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
+                            ticks: { font: { size: 10, family: 'Outfit' }, color: '#94a3b8', padding: 8 }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 10, family: 'Outfit', weight: 'bold' }, color: '#94a3b8', padding: 8 }
+                        }
+                    },
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        }
+
         loadData();
-        setInterval(loadData, 15 * 60 * 1000); // 15 min update
+        setInterval(loadData, 15 * 60 * 1000);
 
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js');
