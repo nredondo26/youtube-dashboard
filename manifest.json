@@ -1,0 +1,15 @@
+{
+  "name": "YouTube Dashboard",
+  "short_name": "YT Stats",
+  "start_url": "mobile.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#38bdf8",
+  "icons": [
+    {
+      "src": "https://img.youtube.com/vi/placeholder/mqdefault.jpg",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

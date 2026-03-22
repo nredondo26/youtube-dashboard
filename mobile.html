@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YouTube Stats Mobile</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.3);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .channel-thumb {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .channel-info h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .channel-info p {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        /* Glass Card Base */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, var(--accent-glow) 0%, transparent 70%);
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        /* Main Metric Card */
+        .main-metric {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .circular-progress {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: conic-gradient(var(--accent) var(--progress, 0%), transparent 0);
+        }
+
+        .circular-progress::after {
+            content: '';
+            position: absolute;
+            width: 135px;
+            height: 135px;
+            background-color: #1e293b;
+            border-radius: 50%;
+        }
+
+        .progress-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .progress-val {
+            font-size: 2.2rem;
+            font-weight: 800;
+            display: block;
+        }
+
+        .progress-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .stat-card {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .stat-val {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .trend-up { color: #4ade80; }
+        .trend-down { color: #f87171; }
+        .trend-flat { color: #94a3b8; }
+
+        .update-time {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            margin-top: 10px;
+        }
+
+        /* Skeleton/Loading */
+        .loading .stat-val, .loading .progress-val {
+            background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            color: transparent;
+            border-radius: 4px;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body class="loading">
+    <div class="container">
+        <header>
+            <img src="" alt="" class="channel-thumb" id="thumb">
+            <div class="channel-info">
+                <h1 id="title">Cargando...</h1>
+                <p id="subs">-- suscriptores</p>
+            </div>
+        </header>
+
+        <section class="card main-metric">
+            <div class="circular-progress" id="progress-circle">
+                <div class="progress-content">
+                    <span class="progress-val" id="total-hours">--</span>
+                    <span class="progress-label">Horas / <span id="goal-val">4k</span></span>
+                </div>
+            </div>
+            <p id="goal-pct" style="font-size: 0.9rem; font-weight: 600;">--% completado</p>
+        </section>
+
+        <div class="stats-grid">
+            <div class="card stat-card">
+                <span class="stat-label">Promedio Diario</span>
+                <span class="stat-val" id="avg-daily">--h</span>
+            </div>
+            <div class="card stat-card">
+                <span class="stat-label">Tendencia</span>
+                <span class="stat-val" id="trend">--</span>
+            </div>
+        </div>
+
+        <p class="update-time" id="last-update">Última actualización: --</p>
+    </div>
+
+    <script>
+        async function loadData() {
+            try {
+                const response = await fetch('summary.json');
+                const data = await response.json();
+                
+                document.getElementById('title').textContent = data.title;
+                document.getElementById('thumb').src = data.thumb;
+                document.getElementById('subs').textContent = `${data.subs.toLocaleString()} suscriptores`;
+                document.getElementById('total-hours').textContent = Math.round(data.total_hours);
+                document.getElementById('goal-val').textContent = (data.goal / 1000) + 'k';
+                document.getElementById('goal-pct').textContent = `${data.goal_pct}% completado`;
+                document.getElementById('avg-daily').textContent = `${data.avg_daily_hours}h`;
+                
+                const trendEl = document.getElementById('trend');
+                let trendText = data.diff_pct > 0 ? `+${data.diff_pct}%` : `${data.diff_pct}%`;
+                trendEl.textContent = trendText;
+                trendEl.className = `stat-val trend-${data.trend}`;
+
+                const progressCircle = document.getElementById('progress-circle');
+                progressCircle.style.setProperty('--progress', `${data.goal_pct}%`);
+
+                const date = new Date(data.last_update);
+                document.getElementById('last-update').textContent = `Actualizado: ${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+
+                document.body.classList.remove('loading');
+            } catch (error) {
+                console.error('Error cargando los datos:', error);
+                document.getElementById('title').textContent = 'Error al cargar';
+            }
+        }
+
+        loadData();
+        // Recargar cada 30 minutos si la pestaña está abierta
+        setInterval(loadData, 30 * 60 * 1000);
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(() => {
+                console.log('Service Worker Registrado');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -258,21 +258,45 @@ def generate_html(videos: List[Dict[str, Any]], goal: float, channel_info: dict,
 
     template_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "template.html")
     with open(template_path, "r", encoding="utf-8") as f:
-        html = f.read()
+        html_content = f.read()
 
     # Reemplazar placeholders
-    html = html.replace("[[START_DATE]]", START_DATE)
-    html = html.replace("[[END_DATE]]", END_DATE)
-    html = html.replace("[[GENERATED_AT]]", generated_at)
-    html = html.replace("[[GOAL]]", str(goal))
-    html = html.replace("[[GOAL_INT]]", f"{int(goal):,}")
-    html = html.replace("[[JS_VIDEOS]]", js_videos)
-    html = html.replace("[[CHANNEL_TITLE]]", channel_info["title"])
-    html = html.replace("[[CHANNEL_THUMB]]", channel_info["thumb"])
-    html = html.replace("[[CHANNEL_SUBS]]", f"{channel_info['subs']:,}")
-    html = html.replace("[[JS_DAILY_METRICS]]", json.dumps(daily_data, ensure_ascii=False))
+    html_content = html_content.replace("[[START_DATE]]", START_DATE)
+    html_content = html_content.replace("[[END_DATE]]", END_DATE)
+    html_content = html_content.replace("[[GENERATED_AT]]", generated_at)
+    html_content = html_content.replace("[[GOAL]]", str(goal))
+    html_content = html_content.replace("[[GOAL_INT]]", f"{int(goal):,}")
+    html_content = html_content.replace("[[JS_VIDEOS]]", js_videos)
+    html_content = html_content.replace("[[CHANNEL_TITLE]]", channel_info["title"])
+    html_content = html_content.replace("[[CHANNEL_THUMB]]", channel_info["thumb"])
+    html_content = html_content.replace("[[CHANNEL_SUBS]]", f"{channel_info['subs']:,}")
+    html_content = html_content.replace("[[JS_DAILY_METRICS]]", json.dumps(daily_data, ensure_ascii=False))
 
-    return html
+    return html_content
+
+
+def export_summary(videos: List[Dict[str, Any]], goal: float, channel_info: dict, daily_data: dict):
+    """Genera un archivo JSON ligero con las métricas clave para la integración móvil."""
+    total_hours = sum(v["hours"] for v in videos)
+    goal_pct = round((total_hours / goal) * 100, 1) if goal > 0 else 0
+    
+    summary = {
+        "title": channel_info["title"],
+        "thumb": channel_info["thumb"],
+        "subs": channel_info["subs"],
+        "total_hours": round(total_hours, 1),
+        "goal": goal,
+        "goal_pct": goal_pct,
+        "avg_daily_hours": daily_data["avg_daily_hours"],
+        "trend": daily_data["comparison"]["trend"],
+        "diff_pct": daily_data["comparison"]["diff_pct"],
+        "last_update": datetime.now().isoformat()
+    }
+    
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "summary.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(summary, f, ensure_ascii=False, indent=2)
+    print(f"   [Summary JSON generado]: {path}")
 
 
 # ─────────────────────────────────────────────
@@ -342,6 +366,9 @@ def main():
 
     print("[Generando dashboard HTML]...")
     html = generate_html(videos, MONETIZATION_GOAL, channel_info, daily_metrics)
+    
+    print("[Exportando resumen para móvil]...")
+    export_summary(videos, MONETIZATION_GOAL, channel_info, daily_metrics)
 
     html_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html")
     with open(html_path, "w", encoding="utf-8") as f:
