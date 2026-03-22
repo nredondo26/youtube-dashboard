@@ -3,10 +3,14 @@
   "thumb": "https://yt3.ggpht.com/npAb917jLQQBMVVQcFtWijUIOXvQDMhE7hrnjAXdshuP5UyFkvjMBDBYoHY3OgsE3XEMa4EfjQ=s800-c-k-c0x00ffffff-no-rj",
   "subs": 2230,
   "total_hours": 2801.8,
-  "goal": 4000,
-  "goal_pct": 70.0,
-  "avg_daily_hours": 41.07,
+  "goal_3k_pct": 93.4,
+  "goal_4k_pct": 70.0,
+  "today_hours": 74.5,
+  "yesterday_hours": 106.95,
+  "today_subs": 4,
+  "yesterday_subs": 8,
+  "subs_diff": -4,
   "trend": "down",
   "diff_pct": -30.3,
-  "last_update": "2026-03-21T19:46:04.984863"
+  "last_update": "2026-03-21T19:57:15.211959"
 }

@@ -76,7 +76,7 @@ def get_daily_reports(analytics, start_date: str, end_date: str) -> list:
         ids="channel==MINE",
         startDate=start_date,
         endDate=end_date,
-        metrics="estimatedMinutesWatched,views",
+        metrics="estimatedMinutesWatched,views,subscribersGained",
         dimensions="day",
         sort="day"
     ).execute()
@@ -278,18 +278,29 @@ def generate_html(videos: List[Dict[str, Any]], goal: float, channel_info: dict,
 def export_summary(videos: List[Dict[str, Any]], goal: float, channel_info: dict, daily_data: dict):
     """Genera un archivo JSON ligero con las métricas clave para la integración móvil."""
     total_hours = sum(v["hours"] for v in videos)
-    goal_pct = round((total_hours / goal) * 100, 1) if goal > 0 else 0
+    
+    # Metas
+    goal_3k = 3000
+    goal_4k = 4000
+    pct_3k = round((total_hours / goal_3k) * 100, 1) if goal_3k > 0 else 0
+    pct_4k = round((total_hours / goal_4k) * 100, 1) if goal_4k > 0 else 0
+    
+    comp = daily_data.get("comparison", {})
     
     summary = {
         "title": channel_info["title"],
         "thumb": channel_info["thumb"],
         "subs": channel_info["subs"],
         "total_hours": round(total_hours, 1),
-        "goal": goal,
-        "goal_pct": goal_pct,
-        "avg_daily_hours": daily_data["avg_daily_hours"],
-        "trend": daily_data["comparison"]["trend"],
-        "diff_pct": daily_data["comparison"]["diff_pct"],
+        "goal_3k_pct": min(pct_3k, 100.0),
+        "goal_4k_pct": min(pct_4k, 100.0),
+        "today_hours": comp.get("today", 0),
+        "yesterday_hours": comp.get("yesterday", 0),
+        "today_subs": comp.get("today_subs", 0),
+        "yesterday_subs": comp.get("yesterday_subs", 0),
+        "subs_diff": comp.get("today_subs", 0) - comp.get("yesterday_subs", 0),
+        "trend": comp.get("trend", "flat"),
+        "diff_pct": comp.get("diff_pct", 0),
         "last_update": datetime.now().isoformat()
     }
     
@@ -348,16 +359,22 @@ def main():
         if len(daily_rows) >= 2:
             yest_min = daily_rows[-2][1]
             today_min = daily_rows[-1][1]
+            yest_subs = daily_rows[-2][3]
+            today_subs = daily_rows[-1][3]
+            
             diff = today_min - yest_min
             diff_pct = (diff / yest_min * 100) if yest_min > 0 else 0
             comp_data = {
                 "today": round(today_min / 60, 2),
                 "yesterday": round(yest_min / 60, 2),
+                "today_subs": today_subs,
+                "yesterday_subs": yest_subs,
                 "diff_pct": round(diff_pct, 1),
                 "trend": "up" if diff > 0 else ("down" if diff < 0 else "flat")
             }
         elif len(daily_rows) == 1:
             comp_data["today"] = round(daily_rows[-1][1] / 60, 2)
+            comp_data["today_subs"] = daily_rows[-1][3]
 
     daily_metrics = {
         "avg_daily_hours": round(avg_daily_min / 60, 2),

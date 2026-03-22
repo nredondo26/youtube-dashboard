@@ -3,21 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>YouTube Stats Mobile</title>
+    <title>YouTube Stats Premium</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --accent: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.3);
+            --card-bg: rgba(30, 41, 59, 0.6);
+            --accent-3k: #8b5cf6; /* Violeta */
+            --accent-4k: #38bdf8; /* Azul */
+            --accent-3k-glow: rgba(139, 92, 246, 0.3);
+            --accent-4k-glow: rgba(56, 189, 248, 0.3);
             --text-main: #f8fafc;
             --text-dim: #94a3b8;
             --glass-border: rgba(255, 255, 255, 0.1);
+            --card-radius: 28px;
         }
 
         * {
@@ -35,199 +38,313 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding: 16px;
             overflow-x: hidden;
+            background: radial-gradient(circle at 50% 0%, #1e293b 0%, #0f172a 100%);
         }
 
         .container {
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 16px;
         }
 
         header {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 10px;
+            justify-content: space-between;
+            padding: 10px 5px;
+        }
+
+        .channel-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .channel-thumb {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid var(--accent);
-            box-shadow: 0 0 15px var(--accent-glow);
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            border: 1.5px solid var(--accent-4k);
+            box-shadow: 0 0 15px var(--accent-4k-glow);
         }
 
-        .channel-info h1 {
-            font-size: 1.2rem;
-            font-weight: 700;
+        .channel-text h1 {
+            font-size: 1.1rem;
+            font-weight: 800;
         }
 
-        .channel-info p {
-            font-size: 0.8rem;
+        .channel-text p {
+            font-size: 0.75rem;
             color: var(--text-dim);
         }
 
         /* Glass Card Base */
         .card {
             background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 24px;
+            border-radius: var(--card-radius);
+            padding: 20px;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at center, var(--accent-glow) 0%, transparent 70%);
-            opacity: 0.2;
-            pointer-events: none;
-        }
-
-        /* Main Metric Card */
-        .main-metric {
-            text-align: center;
+        /* Dual Progress Container */
+        .dual-progress-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 20px;
+            padding: 30px 20px;
         }
 
-        .circular-progress {
+        .progress-visual {
             position: relative;
-            width: 160px;
-            height: 160px;
-            border-radius: 50%;
+            width: 220px;
+            height: 220px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: conic-gradient(var(--accent) var(--progress, 0%), transparent 0);
         }
 
-        .circular-progress::after {
-            content: '';
+        /* Outer Circle (4k) */
+        .circle-outer {
             position: absolute;
-            width: 135px;
-            height: 135px;
-            background-color: #1e293b;
+            width: 210px;
+            height: 210px;
             border-radius: 50%;
+            background: conic-gradient(var(--accent-4k) var(--p4k, 0%), transparent 0);
+            mask: radial-gradient(transparent 68%, black 70%);
+            -webkit-mask: radial-gradient(transparent 68%, black 70%);
+            transition: --p4k 1s ease-out;
+            filter: drop-shadow(0 0 5px var(--accent-4k-glow));
         }
 
-        .progress-content {
-            position: relative;
-            z-index: 10;
+        /* Inner Circle (3k) */
+        .circle-inner {
+            position: absolute;
+            width: 155px;
+            height: 155px;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent-3k) var(--p3k, 0%), transparent 0);
+            mask: radial-gradient(transparent 68%, black 70%);
+            -webkit-mask: radial-gradient(transparent 68%, black 70%);
+            transition: --p3k 1s ease-out;
+            filter: drop-shadow(0 0 5px var(--accent-3k-glow));
+        }
+
+        .progress-info {
             text-align: center;
+            z-index: 5;
         }
 
-        .progress-val {
-            font-size: 2.2rem;
+        .total-val {
+            font-size: 2.6rem;
             font-weight: 800;
-            display: block;
+            line-height: 1;
         }
 
-        .progress-label {
-            font-size: 0.75rem;
+        .total-label {
+            font-size: 0.8rem;
             color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-weight: 600;
         }
 
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+        .milestones {
+            display: flex;
+            width: 100%;
+            justify-content: space-around;
+            gap: 10px;
         }
 
-        .stat-card {
-            padding: 18px;
+        .milestone-item {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            align-items: center;
+            gap: 4px;
         }
 
-        .stat-val {
-            font-size: 1.4rem;
+        .milestone-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-bottom: 2px;
+        }
+
+        .color-3k { background-color: var(--accent-3k); box-shadow: 0 0 10px var(--accent-3k-glow); }
+        .color-4k { background-color: var(--accent-4k); box-shadow: 0 0 10px var(--accent-4k-glow); }
+
+        .milestone-pct {
+            font-size: 1.1rem;
             font-weight: 700;
         }
 
-        .stat-label {
-            font-size: 0.7rem;
+        .milestone-label {
+            font-size: 0.65rem;
             color: var(--text-dim);
             text-transform: uppercase;
+            font-weight: 600;
         }
 
-        .trend-up { color: #4ade80; }
-        .trend-down { color: #f87171; }
-        .trend-flat { color: #94a3b8; }
+        /* Comparison Section */
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-left: 10px;
+            margin-bottom: -4px;
+        }
 
-        .update-time {
-            text-align: center;
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .comp-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 24px;
+        }
+
+        .comp-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .comp-main-val {
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+
+        .comp-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        .comp-right {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .comp-diff {
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .diff-up { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
+        .diff-down { background: rgba(248, 113, 113, 0.15); color: #f87171; }
+        .diff-flat { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
+
+        .comp-prev {
             font-size: 0.7rem;
             color: var(--text-dim);
-            margin-top: 10px;
+            margin-top: 4px;
         }
 
-        /* Skeleton/Loading */
-        .loading .stat-val, .loading .progress-val {
-            background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-            color: transparent;
-            border-radius: 4px;
+        /* Pulse Animation for active metrics */
+        .pulse {
+            animation: pulse-ring 2s infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
         }
 
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+        .update-footer {
+            text-align: center;
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            margin: 10px 0 30px;
         }
+
+        @property --p3k { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+        @property --p4k { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+
     </style>
 </head>
-<body class="loading">
+<body>
     <div class="container">
         <header>
-            <img src="" alt="" class="channel-thumb" id="thumb">
             <div class="channel-info">
-                <h1 id="title">Cargando...</h1>
-                <p id="subs">-- suscriptores</p>
-            </div>
-        </header>
-
-        <section class="card main-metric">
-            <div class="circular-progress" id="progress-circle">
-                <div class="progress-content">
-                    <span class="progress-val" id="total-hours">--</span>
-                    <span class="progress-label">Horas / <span id="goal-val">4k</span></span>
+                <img src="" alt="" class="channel-thumb" id="thumb">
+                <div class="channel-text">
+                    <h1 id="title">Dashboard</h1>
+                    <p id="subs">-- Subs</p>
                 </div>
             </div>
-            <p id="goal-pct" style="font-size: 0.9rem; font-weight: 600;">--% completado</p>
+            <div id="status-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 8px #4ade80;"></div>
+        </header>
+
+        <section class="card dual-progress-container">
+            <div class="progress-visual">
+                <div class="circle-outer" id="circle-4k"></div>
+                <div class="circle-inner" id="circle-3k"></div>
+                <div class="progress-info">
+                    <span class="total-label">VISTO</span>
+                    <span class="total-val" id="total-hours">--</span>
+                    <span class="total-label">HORAS</span>
+                </div>
+            </div>
+            
+            <div class="milestones">
+                <div class="milestone-item">
+                    <div class="milestone-dot color-3k"></div>
+                    <span class="milestone-pct" id="pct-3k">--%</span>
+                    <span class="milestone-label">Meta 3k</span>
+                </div>
+                <div class="milestone-item">
+                    <div class="milestone-dot color-4k"></div>
+                    <span class="milestone-pct" id="pct-4k">--%</span>
+                    <span class="milestone-label">Meta 4k</span>
+                </div>
+            </div>
         </section>
 
-        <div class="stats-grid">
-            <div class="card stat-card">
-                <span class="stat-label">Promedio Diario</span>
-                <span class="stat-val" id="avg-daily">--h</span>
+        <h2 class="section-title">Hoy vs Ayer</h2>
+        <div class="comparison-grid">
+            <!-- Horas -->
+            <div class="card comp-card">
+                <div class="comp-left">
+                    <span class="comp-label">Horas Visionadas</span>
+                    <span class="comp-main-val" id="today-hours">--h</span>
+                </div>
+                <div class="comp-right">
+                    <span class="comp-diff" id="trend-hours">--%</span>
+                    <span class="comp-prev">Ayer: <span id="yest-hours">--h</span></span>
+                </div>
             </div>
-            <div class="card stat-card">
-                <span class="stat-label">Tendencia</span>
-                <span class="stat-val" id="trend">--</span>
+            <!-- Suscriptores -->
+            <div class="card comp-card">
+                <div class="comp-left">
+                    <span class="comp-label">Nuevos Subs</span>
+                    <span class="comp-main-val" id="today-subs">--</span>
+                </div>
+                <div class="comp-right">
+                    <span class="comp-diff" id="trend-subs">--</span>
+                    <span class="comp-prev">Ayer: <span id="yest-subs">--</span></span>
+                </div>
             </div>
         </div>
 
-        <p class="update-time" id="last-update">Última actualización: --</p>
+        <p class="update-footer" id="last-update">Última sincronización: --</p>
     </div>
 
     <script>
@@ -238,39 +355,48 @@
                 
                 document.getElementById('title').textContent = data.title;
                 document.getElementById('thumb').src = data.thumb;
-                document.getElementById('subs').textContent = `${data.subs.toLocaleString()} suscriptores`;
+                document.getElementById('subs').textContent = `${data.subs.toLocaleString()} Suscriptores`;
                 document.getElementById('total-hours').textContent = Math.round(data.total_hours);
-                document.getElementById('goal-val').textContent = (data.goal / 1000) + 'k';
-                document.getElementById('goal-pct').textContent = `${data.goal_pct}% completado`;
-                document.getElementById('avg-daily').textContent = `${data.avg_daily_hours}h`;
-                
-                const trendEl = document.getElementById('trend');
-                let trendText = data.diff_pct > 0 ? `+${data.diff_pct}%` : `${data.diff_pct}%`;
-                trendEl.textContent = trendText;
-                trendEl.className = `stat-val trend-${data.trend}`;
 
-                const progressCircle = document.getElementById('progress-circle');
-                progressCircle.style.setProperty('--progress', `${data.goal_pct}%`);
+                // Milestones
+                document.getElementById('pct-3k').textContent = `${data.goal_3k_pct}%`;
+                document.getElementById('pct-4k').textContent = `${data.goal_4k_pct}%`;
+                
+                const c3k = document.getElementById('circle-3k');
+                const c4k = document.getElementById('circle-4k');
+                c3k.style.setProperty('--p3k', `${data.goal_3k_pct}%`);
+                c4k.style.setProperty('--p4k', `${data.goal_4k_pct}%`);
+
+                // Hours Comparison
+                document.getElementById('today-hours').textContent = `${data.today_hours}h`;
+                document.getElementById('yest-hours').textContent = `${data.yesterday_hours}h`;
+                
+                const trendHours = document.getElementById('trend-hours');
+                trendHours.textContent = (data.diff_pct > 0 ? '+' : '') + data.diff_pct + '%';
+                trendHours.className = `comp-diff diff-${data.trend}`;
+
+                // Subs Comparison
+                document.getElementById('today-subs').textContent = `${data.today_subs}`;
+                document.getElementById('yest-subs').textContent = `${data.yesterday_subs}`;
+                
+                const trendSubs = document.getElementById('trend-subs');
+                const subsDiff = data.subs_diff;
+                trendSubs.textContent = (subsDiff > 0 ? '+' : '') + subsDiff;
+                trendSubs.className = `comp-diff diff-${subsDiff > 0 ? 'up' : (subsDiff < 0 ? 'down' : 'flat')}`;
 
                 const date = new Date(data.last_update);
-                document.getElementById('last-update').textContent = `Actualizado: ${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+                document.getElementById('last-update').textContent = `Sincronizado: ${date.toLocaleDateString()} a las ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
 
-                document.body.classList.remove('loading');
             } catch (error) {
-                console.error('Error cargando los datos:', error);
-                document.getElementById('title').textContent = 'Error al cargar';
+                console.error('Error:', error);
             }
         }
 
         loadData();
-        // Recargar cada 30 minutos si la pestaña está abierta
-        setInterval(loadData, 30 * 60 * 1000);
+        setInterval(loadData, 15 * 60 * 1000); // 15 min update
 
-        // Service Worker Registration
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').then(() => {
-                console.log('Service Worker Registrado');
-            });
+            navigator.serviceWorker.register('sw.js');
         }
     </script>
 </body>
