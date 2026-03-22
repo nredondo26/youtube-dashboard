@@ -6,6 +6,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 import isodate
 from dotenv import load_dotenv
+from typing import List, Dict, Any
 
 # Cargar variables de entorno
 load_dotenv()
@@ -102,7 +103,7 @@ def get_channel_info(youtube) -> dict:
         "uploads_id": item["contentDetails"]["relatedPlaylists"]["uploads"]
     }
 
-def get_all_uploads(youtube, uploads_playlist_id, start_date_str) -> list:
+def get_all_uploads(youtube, uploads_playlist_id: str, start_date_str: str) -> List[str]:
     """Obtiene todos los videos de la playlist de subidas filtrados por fecha."""
     video_ids = []
     next_page_token = None
@@ -135,7 +136,7 @@ def get_all_uploads(youtube, uploads_playlist_id, start_date_str) -> list:
 # ─────────────────────────────────────────────
 # OBTENER DETALLES DE VIDEOS
 # ─────────────────────────────────────────────
-def get_video_details(youtube, video_ids: list, start_date_dt: datetime) -> dict:
+def get_video_details(youtube, video_ids: Any, start_date_dt: datetime) -> Dict[str, Any]:
     info = {}
     for i in range(0, len(video_ids), 50):
         batch = video_ids[i : i + 50]
@@ -145,18 +146,36 @@ def get_video_details(youtube, video_ids: list, start_date_dt: datetime) -> dict
         ).execute()
 
         for item in res.get("items", []):
-            vid      = item["id"]
-            seconds  = isodate.parse_duration(item["contentDetails"]["duration"]).total_seconds()
-            published_str  = item["snippet"]["publishedAt"][:10]
-            published_date = datetime.strptime(published_str, "%Y-%m-%d")
+            vid = item["id"]
+            
+            # Robust extraction of fields
+            content_details = item.get("contentDetails", {})
+            snippet         = item.get("snippet", {})
+            statistics      = item.get("statistics", {})
+            
+            duration_iso = content_details.get("duration")
+            if not duration_iso:
+                # Omitir videos sin duración (ej. transmisiones en vivo actuales o errores)
+                print(f"   [Aviso] El video {vid} ('{snippet.get('title', 'Sin título')}') no tiene duración reportada. Saltando.")
+                continue
+
+            try:
+                seconds = isodate.parse_duration(duration_iso).total_seconds()
+            except Exception as e:
+                print(f"   [Error] No se pudo parsear la duración del video {vid}: {e}")
+                continue
+
+            published_str  = snippet.get("publishedAt", "")[:10]
+            if not published_str:
+                continue
 
             if seconds >= MIN_DURATION_SEC:
                 info[vid] = {
-                    "title":     item["snippet"]["title"],
+                    "title":     snippet.get("title", "Sin título"),
                     "published": published_str,
                     "duration":  round(seconds / 60, 2),
-                    "likes":     int(item["statistics"].get("likeCount", 0)),
-                    "comments":  int(item["statistics"].get("commentCount", 0))
+                    "likes":     int(statistics.get("likeCount", 0)),
+                    "comments":  int(statistics.get("commentCount", 0))
                 }
     return info
 
@@ -164,7 +183,7 @@ def get_video_details(youtube, video_ids: list, start_date_dt: datetime) -> dict
 # ─────────────────────────────────────────────
 # PROCESAR MÉTRICAS
 # ─────────────────────────────────────────────
-def process_videos(rows: list, info: dict) -> list:
+def process_videos(rows: List[List[Any]], info: Dict[str, Dict[str, Any]]) -> List[Dict[str, Any]]:
     hoy = datetime.now(timezone.utc)
     result = []
 
@@ -213,7 +232,7 @@ def process_videos(rows: list, info: dict) -> list:
 # ─────────────────────────────────────────────
 # GENERAR HTML  (versión premium con Chart.js)
 # ─────────────────────────────────────────────
-def generate_html(videos: list, goal: float, channel_info: dict, daily_data: dict) -> str:
+def generate_html(videos: List[Dict[str, Any]], goal: float, channel_info: dict, daily_data: dict) -> str:
     generated_at = datetime.now().strftime("%d/%m/%Y %H:%M")
 
     # Build JSON for the JS data block
